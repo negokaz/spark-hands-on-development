@@ -1,0 +1,17 @@
+{
+  "name": "twitter-hashtag-ranking",
+
+  "version": "1.0.0",
+
+  "dependencies": {
+
+    "polymer": "Polymer/polymer#^1.1.0",
+
+    "iron-collapse" : "PolymerElements/iron-collapse#^1.0.0",
+
+    "paper-styles"        : "PolymerElements/paper-styles#^1.0.0",
+    "paper-material"      : "PolymerElements/paper-material#^1.0.0",
+    "paper-item"          : "PolymerElements/paper-item#^1.0.0",
+    "paper-header-panel"  : "PolymerElements/paper-header-panel#^1.0.0"
+  }
+}

@@ -1,0 +1,145 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="x-websocket.html">
+
+<dom-module id="ranking-view">
+
+    <style>
+
+        :host {
+            color: var(--primary-text-color);
+        }
+
+        .ranking {
+            border-bottom: 1px solid var(--divider-color);
+        }
+
+        .rank {
+            margin: 0 10px;
+            color: var(--secondary-text-color);
+        }
+
+        .hashTag {
+        }
+
+        .count {
+            font-size: 70%;
+            color: var(--secondary-text-color);
+        }
+
+        .detail {
+            border-bottom: 1px solid var(--divider-color);
+        }
+
+        .headTweet {
+            color: var(--disabled-text-color);
+            width: 50%;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .tweet {
+            margin: 0 10px;
+            padding: 10px;
+            border-bottom: 1px solid var(--divider-color);
+            font-size: 60%;
+        }
+
+        .paper-header {
+            height: 60px;
+            font-size: 16px;
+            line-height: 60px;
+            padding: 0 10px;
+            color: white;
+            transition: height 0.2s;
+            background-color: var(--paper-light-blue-500);
+        }
+
+        paper-header-panel {
+            @apply(--shadow-elevation-2dp);
+        }
+
+    </style>
+
+    <template>
+        <paper-header-panel>
+
+            <div class="paper-header">Twitter Hashtag Ranking</div>
+
+            <x-websocket id="websocket" url="{{url}}" json="true" auto="true" on-open="_requestAnalyze" on-message="_handleMessage"></x-websocket>
+            <div class="fit">
+                <template is="dom-repeat" items="{{rankings}}" as="ranking">
+                    <div>
+                        <paper-item class="ranking" on-click="_openRanking">
+                            <span class="rank">{{ranking.rank}}</span>
+                            <span class="hashTag">
+                                <span>{{ranking.hashTag}}</span>
+                                <span class="count">×<span>{{ranking.sampleCount}}</span></span>
+                            </span>
+                            <span class="headTweet">{{ranking.sampleTweets.0}}</span>
+                        </paper-item>
+                        <iron-collapse class="detail">
+                            <template is="dom-repeat" items="{{ranking.sampleTweets}}" as="tweet">
+                                <div class="tweet">{{tweet}}</div>
+                            </template>
+                        </iron-collapse>
+                    </div>
+                </template>
+            </div>
+        </paper-header-panel>
+    </template>
+
+    <script>
+        Polymer({
+
+            is: "ranking-view",
+
+            properties: {
+
+                url: {
+                    type: String,
+                    notify: true
+                }
+            },
+
+            _requestAnalyze: function(e) {
+                this.$.websocket.send({ method: "analyze" });
+            },
+
+            _handleMessage: function(e) {
+                console.log(e.detail.data);
+                this.rankings = e.detail.data;
+            },
+
+            _openRanking: function(e) {
+
+                var ranking = e.target.parentNode.querySelector(".detail");
+
+                if (ranking) {
+                    if (this._openedRanking && ranking !== this._openedRanking) {
+                        this._openedRanking.hide();
+                        ranking.show();
+                        this._openedRanking = ranking;
+                    } else if (this._openedRanking && ranking === this._openedRanking) {
+                        this._openedRanking.hide();
+                        this._openedRanking = null;
+                    } else {
+                        ranking.show();
+                        this._openedRanking = ranking;
+                    }
+                }
+            },
+
+            _formatRank: function(index) {
+                return index + 1;
+            }
+
+        });
+  </script>
+
+</dom-module>

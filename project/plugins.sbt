@@ -14,3 +14,7 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-rjs" % "1.0.7")
 addSbtPlugin("com.typesafe.sbt" % "sbt-digest" % "1.1.0")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-mocha" % "1.1.0")
+
+// assebly Plugin
+// Spark に submit するための依存するライブラリを全て含んだパッケージ(jar)を作るのに使う
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.0")
