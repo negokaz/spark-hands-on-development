@@ -1,0 +1,200 @@
+@import url(http://fonts.googleapis.com/earlyaccess/notosansjapanese.css);
+@import url(fonts.css)
+
+/*
+ * default shape
+ *
+ */
+
+ /* --- option --- */
+
+.small {
+  /* for inline */
+  font-size: 0.6em;
+}
+
+.small * {
+  /* for inline */
+  font-size: 0.6em;
+  /* for block */
+  max-width: 5em;
+  max-hegiht: 5em;
+}
+
+.big {
+  /* for inline */
+  font-size: 2.5em;
+}
+
+.big * {
+  /* for inline */
+  font-size: 2.5em;
+  /* for block */
+  min-width: 40%;
+  min-height: 40%;
+}
+
+.middle > .glass {
+  padding: 1px 0.25em;
+}
+
+.fit.remark-slide-content {
+  padding: 0;
+}
+
+.fit-left.remark-slide-content {
+  padding: 1em 6em 1em 0;
+}
+
+.fit-left.remark-slide-content > * {
+  padding: 0 2em;
+}
+
+.fit-right.remark-slide-content {
+  padding: 1em 0 1em 6em;
+}
+
+.fit-right.remark-slide-content > * {
+  padding: 0 2em;
+}
+
+/* -------------- */
+
+body {
+  font-family: 'Noto Sans Japanese';
+}
+
+.remark-code, .remark-inline-code {
+   font-family: 'mplus-1m-regular';
+ }
+
+.remark-slide-content {
+  font-size: 26px;
+  background-position: center !important;
+  background-size: cover !important;
+}
+
+.remark-slide-number {
+  padding: 0 !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: normal;
+}
+
+code {
+  padding: 0 0.25em;
+}
+
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 6px 13px;
+  border-style: solid;
+  border-width: 1px;
+}
+
+/*
+ * light theme (default)
+ *
+ */
+
+/* --- option --- */
+
+.glass {
+  background-color: rgba(255, 255, 255, 0.65);
+}
+
+.accent {
+  color: #E91E63;
+}
+
+/* -------------- */
+
+.remark-slide-content {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: rgba(0, 0, 0, 0.87);
+}
+
+strong, em {
+  color: rgba(0, 0, 0, 0.87);
+}
+
+a {
+  color: #2196F3;
+}
+
+code {
+  color: rgba(0, 0, 0, 0.87);
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+th, td {
+  padding: 6px 13px;
+  border-color: #E0E0E0;
+}
+
+table tr:nth-child(2n) {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+hr {
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+/*
+ * dark theme
+ *
+ */
+
+/* --- option --- */
+
+.dark .glass {
+  background-color: rgba(0, 0, 0, 0.65);
+}
+
+.dark .accent {
+  color: #E91E63;
+}
+
+/* -------------- */
+
+.dark.remark-slide-content {
+  background-color: #424242;
+  color: rgba(255, 255, 255, 0.70);
+}
+
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+  color: rgba(255, 255, 255, 1);
+}
+
+.dark strong, .dark em {
+  color: rgba(255, 255, 255, 1);
+}
+
+.dark a {
+  color: #42A5F5;
+}
+
+.dark code {
+  color: rgba(255, 255, 255, 0.87);
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.dark th, .dark td {
+  border-color: #757575;
+}
+
+.dark table tr:nth-child(2n) {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.dark hr {
+  border-color: rgba(255, 255, 255, 0.12);
+}
