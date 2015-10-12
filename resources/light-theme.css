@@ -1,0 +1,156 @@
+/*
+ * light theme (default)
+ *
+ */
+@import "fonts.css";
+.small {
+  /* for inline */
+  font-size: 0.8em;
+}
+.small * {
+  /* for inline */
+  font-size: 0.8em;
+  /* for block */
+  max-width: 5em;
+  max-hegiht: 5em;
+}
+.big {
+  /* for inline */
+  font-size: 2em;
+}
+.big * {
+  /* for inline */
+  font-size: 2em;
+  /* for block */
+  min-width: 40%;
+  min-height: 40%;
+}
+.middle > .glass {
+  padding: 1px 0.25em;
+}
+.fit.remark-slide-content {
+  padding: 0;
+}
+.fit-left.remark-slide-content {
+  padding: 1em 6em 1em 0;
+}
+.fit-left.remark-slide-content > * {
+  padding: 0 2em;
+}
+.fit-right.remark-slide-content {
+  padding: 1em 0 1em 6em;
+}
+.fit-right.remark-slide-content > * {
+  padding: 0 2em;
+}
+.twitter-icon * {
+  list-style: none;
+}
+.twitter-icon *:before {
+  content: '';
+  display: inline-block;
+  background-size: 1.5em;
+  width: 1.5em;
+  height: 1.5em;
+  background-repeat: no-repeat;
+  background-image: url('img/twitter.svg');
+  margin: 0 0.5em;
+  position: relative;
+  top: 0.375em;
+}
+.github-icon * {
+  list-style: none;
+}
+.github-icon *:before {
+  content: '';
+  display: inline-block;
+  background-size: 1.5em;
+  width: 1.5em;
+  height: 1.5em;
+  background-repeat: no-repeat;
+  background-image: url('img/github.svg');
+  margin: 0 0.5em;
+  position: relative;
+  top: 0.375em;
+}
+body {
+  font-family: 'Noto Sans Japanese';
+}
+.remark-code,
+.remark-inline-code {
+  font-family: 'mplus-1m-regular';
+}
+.remark-slide-content {
+  font-size: 2em;
+  background-position: center !important;
+  background-size: cover !important;
+  padding: 1em 3em 1em 3em;
+}
+.remark-slide-number {
+  padding: 0 !important;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+}
+code {
+  padding: 0 0.25em;
+}
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+th,
+td {
+  padding: 6px 13px;
+  border-style: solid;
+  border-width: 1px;
+}
+li {
+  margin-bottom: 0.5em;
+}
+/* --- option --- */
+.glass {
+  background-color: rgba(255, 255, 255, 0.65);
+}
+.accent {
+  color: #E91E63;
+}
+/* -------------- */
+.remark-slide-content {
+  color: rgba(0, 0, 0, 0.54);
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: rgba(0, 0, 0, 0.87);
+}
+strong,
+em {
+  color: rgba(0, 0, 0, 0.87);
+}
+a {
+  color: #2196F3;
+}
+code {
+  color: rgba(0, 0, 0, 0.87);
+  background-color: rgba(0, 0, 0, 0.06);
+}
+th,
+td {
+  padding: 6px 13px;
+  border-color: #E0E0E0;
+}
+table tr:nth-child(2n) {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+hr {
+  border-color: rgba(0, 0, 0, 0.12);
+}

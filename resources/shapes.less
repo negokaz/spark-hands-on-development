@@ -1,0 +1,89 @@
+.small {
+  /* for inline */
+  font-size: 0.8em;
+
+  * {
+    /* for inline */
+    font-size: 0.8em;
+    /* for block */
+    max-width: 5em;
+    max-hegiht: 5em;
+  }
+}
+
+.big {
+  /* for inline */
+  font-size: 2em;
+
+  * {
+    /* for inline */
+    font-size: 2em;
+    /* for block */
+    min-width: 40%;
+    min-height: 40%;
+  }
+}
+
+.middle > .glass {
+  padding: 1px 0.25em;
+}
+
+.fit {
+
+  &.remark-slide-content {
+    padding: 0;
+  }
+}
+
+.fit-left {
+
+  &.remark-slide-content {
+    padding: 1em 6em 1em 0;
+  }
+
+  &.remark-slide-content > * {
+    padding: 0 2em;
+  }
+}
+
+.fit-right {
+
+  &.remark-slide-content {
+    padding: 1em 0 1em 6em;
+  }
+
+  &.remark-slide-content > * {
+    padding: 0 2em;
+  }
+}
+
+.twitter-icon {
+
+  .list-style-svg('img/twitter.svg', 1.5em);
+}
+
+
+.github-icon {
+
+  .list-style-svg('img/github.svg', 1.5em);
+}
+
+.list-style-svg (@url, @size) {
+
+    * {
+      list-style: none;
+
+      &:before {
+        content: '';
+        display: inline-block;
+        background-size: @size;
+        width: @size;
+        height: @size;
+        background-repeat: no-repeat;
+        background-image: url(@url);
+        margin: 0 0.5em;
+        position: relative;
+        top: @size / 4;
+      }
+    }
+}
