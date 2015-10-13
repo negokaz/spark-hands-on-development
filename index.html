@@ -7,7 +7,6 @@
 </head>
 
 <style>
-  /* Two-column layout */
   .left-column {
     width: 45%;
     float: left;
@@ -35,7 +34,8 @@ Twitterハッシュタグのランキングを実況する<br>Webアプリを開
 
 * 根来 和輝 .small[Negoro Kazuki]
 * TIS株式会社 生産技術R＆D室
-* Scala / Play / Slick / Akka / Spark
+* Reactive Platform の有効性検証
+    * Scala / Play / Slick / Akka / Spark
 
 .twitter-icon[[@negokaz](https://twitter.com/negokaz)] .github-icon[[negokaz](https://github.com/negokaz)]
 
@@ -53,6 +53,11 @@ Twitterハッシュタグのランキングを実況する<br>Webアプリを開
 
 # Spark vs Hadoop
 
+* Hadoop はストレージに書き込む、Sparkは基本的にインメモリ
+* Hadoopは高スループット重視、Sparkは低レイテンシ重視
+    * メモリの10倍・100倍とかなるデータ量だと Hadoop のほうが安定
+    * http://www.publickey1.jp/blog/15/apache_sparksparkntt.html
+
 ---
 
 # Spark のユースケース
@@ -60,6 +65,9 @@ Twitterハッシュタグのランキングを実況する<br>Webアプリを開
 ---
 
 # Spark のアーキテクチャ
+
+* Executor の話
+* Worker と Cluster
 
 ---
 class: middle, center
@@ -70,6 +78,18 @@ class: middle, center
 
 # アプリケーションの起動
 
+.small[Mac OS X]
+```bash
+./activator backend/run
+./activator run
+```
+
+.small[Windows]
+```bash
+activator backend/run
+activator run
+```
+
 ---
 class: middle, center
 
@@ -77,19 +97,91 @@ class: middle, center
 
 ---
 
+1. IntelliJ IDEA を起動
+1. *SparkLogic.scala* を開く
+
+※ Shift × 2 で *SparkLogic.scala* を入力すると楽
+
+---
+
+~~~scala
+/**
+ * ① テキストファイルからツイートを読み込んで解析
+ */
+def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelection): Unit = {
+
+  // tweets.txt の中にある全ツイートの RDD
+  val tweetsRDD: RDD[String] = sc.textFile(tweetsFilePath)
+
+  // Ranking に変換する RDD
+  val rankingsRDD: RDD[Ranking] =
+    tweetsRDD map { tweet: String =>
+      // String を Ranking ケースクラスに変換
+      Ranking("#hashTag", rank = 1, Array(tweet), sampleCount = 1)
+    }
+
+  // collect() を呼び出すことによって実際の処理が始まる
+  val rankings = rankingsRDD.collect()
+
+  // フロントエンドに結果を渡す
+  receiver ! rankings.toSeq
+}
+~~~
+
+---
+
+# analyzeRanking
+
+* map はコレクションの中の要素を変換する
+* RDD の説明
+* collect() で実際の処理が始まる
+
+---
+
 # 日本語のツイートを抽出
+
+* filterを使う
+* filterにはStringを引数にとってBooleanを返す関数を渡す
+  * true になった要素のみのコレクションになる
 
 ---
 
 # ハッシュタグを抽出
 
+* 最終的にハッシュタグと、そのハッシュタグを含んでいるツイートのリストを作らないといけない
+* groupBy の紹介
+* ハッシュタグとツイートのペアを作りたい
+* flatMap と map で頑張る
+* for で綺麗に書けるよ
+
+---
+
+# ハッシュタグでグルーピング
+
+* groupBy を呼ぶ
+
 ---
 
 # ツイートの多い順にソート
 
+* sortBy で tweets.size 順に
+* 降順にしておく
+
 ---
 
 # ランクを設定
+
+* zipWithIndex
+* 0 始まりだから +1 しよう
+
+---
+
+# Streaming にチャレンジ
+
+* hashTagTweetPair までは同じ操作でOK
+* グループを作るときに window を作る
+* foreachRDD 内で sortedHashTagGroup 以降をやる
+* ssc.start() を呼ぶ
 
 ---
 class: middle, center
@@ -112,14 +204,15 @@ activator backend/assembly
 ```
 
 ```bash
-spark-hands-on-development/modules/backend/target/scala-2.10/.jar
+spark-hands-on-development/modules/backend/target/scala-2.10/
+twitter-hashtag-ranking-backend-assembly-1.0.0.jar
 ```
 
 ---
 
 # クラスタの起動 - Master
 
-```
+```bash
 spark-class org.apache.spark.deploy.master.Master
 ```
 
@@ -134,7 +227,7 @@ https://spark.apache.org/docs/latest/spark-standalone.html#standby-masters-with-
 
 # クラスタの起動 - Workers
 
-```
+```bash
 spark-class org.apache.spark.deploy.worker.Worker spark://XXX.XXX.XXX.XXX:7077
 ```
 
@@ -145,13 +238,25 @@ spark-class org.apache.spark.deploy.worker.Worker spark://XXX.XXX.XXX.XXX:7077
 
 # クラスタへのSubmit
 
-```
-spark-submit --master spark://XXX.XXX.XXX.XXX:7077 /path/to/your.jar
+```bash
+cd spark-hands-on-development/modules/backend/target/scala-2.10/
+spark-submit --master spark://XXX.XXX.XXX.XXX:7077 twitter-hashtag-ranking-backend-assembly-1.0.0.jar
 ```
 
 ---
 
 # まとめ
+
+* Spark は簡単に始められる
+* スケールアウトも簡単
+* 実際に運用していくにはチューニングの知識が必要
+
+---
+
+# 書籍: 初めてのSpark
+
+* いいよ
+* 基本からチューニングの話まで盛りだくさん
 
 ---
 class: middle, center

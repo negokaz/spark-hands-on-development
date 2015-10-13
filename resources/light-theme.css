@@ -85,22 +85,19 @@
   max-width: 5em;
   max-hegiht: 5em;
 }
-.pre {
-  font-family: 'mplus-1m-regular';
-  font-size: 0.6em;
-}
 body {
   font-family: 'Noto Sans Japanese';
 }
 .remark-code,
 .remark-inline-code {
+  font-size: 16px;
   font-family: 'mplus-1m-regular';
 }
 .remark-slide-content {
   font-size: 2em;
   background-position: center !important;
   background-size: cover !important;
-  padding: 1em 3em 1em 3em;
+  padding: 1em 2em 1em 2em;
 }
 .remark-slide-number {
   padding: 0 !important;
@@ -114,7 +111,7 @@ h6 {
   font-weight: 600;
 }
 code {
-  padding: 0 0.25em;
+  padding: 0;
 }
 table {
   border-spacing: 0;
