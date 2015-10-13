@@ -1,3 +1,5 @@
+@import "mixins.less";
+
 .small {
   /* for inline */
   font-size: 0.8em;
@@ -68,22 +70,8 @@
   .list-style-svg('img/github.svg', 1.5em);
 }
 
-.list-style-svg (@url, @size) {
+.quote-from {
+  .small;
 
-    * {
-      list-style: none;
-
-      &:before {
-        content: '';
-        display: inline-block;
-        background-size: @size;
-        width: @size;
-        height: @size;
-        background-repeat: no-repeat;
-        background-image: url(@url);
-        margin: 0 0.5em;
-        position: relative;
-        top: @size / 4;
-      }
-    }
+  float: right;
 }

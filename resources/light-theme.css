@@ -73,6 +73,22 @@
   position: relative;
   top: 0.375em;
 }
+.quote-from {
+  /* for inline */
+  font-size: 0.8em;
+  float: right;
+}
+.quote-from * {
+  /* for inline */
+  font-size: 0.8em;
+  /* for block */
+  max-width: 5em;
+  max-hegiht: 5em;
+}
+.pre {
+  font-family: 'mplus-1m-regular';
+  font-size: 0.6em;
+}
 body {
   font-family: 'Noto Sans Japanese';
 }

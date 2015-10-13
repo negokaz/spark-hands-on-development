@@ -1,29 +1,31 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>remark template</title>
-    <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="resources/light-theme.css" />
-  </head>
-  <style>
-    /* Two-column layout */
-    .left-column {
-      width: 45%;
-      float: left;
-    }
-    .right-column {
-      width: 45%;
-      float: right;
-    }
-  </style>
-  <body>
-    <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js"></script>
+<head>
+  <title>remark template</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="resources/light-theme.css" />
+</head>
+
+<style>
+  /* Two-column layout */
+  .left-column {
+    width: 45%;
+    float: left;
+  }
+  .right-column {
+    width: 45%;
+    float: right;
+  }
+</style>
+
+<body>
+<script src="https://gnab.github.io/remark/downloads/remark-latest.min.js"></script>
 <textarea id="source">
 class: middle
 
-# Apache Spark <br> Hands-On Development
+# Apache Spark <br>Hands-On Development
 
-Twitterハッシュタグのランキングを<br>実況するWebアプリを開発してみよう
+Twitterハッシュタグのランキングを実況する<br>Webアプリを開発してみよう
 
 .right[Tech-Circle #9]
 
@@ -40,6 +42,12 @@ Twitterハッシュタグのランキングを<br>実況するWebアプリを開
 ---
 
 # Apache Sparkとは？
+
+> Apache Spark™ is a fast and general engine for large-scale data processing.
+>
+> ![Spark vs Hadoop](http://spark.apache.org/images/logistic-regression.png)
+
+.quote-from[http://spark.apache.org/]
 
 ---
 
@@ -92,13 +100,54 @@ class: middle, center
 
 # バックエンドのビルド
 
+.small[Mac OS X]
+```bash
+cd spark-hands-on-development
+./activator backend/assembly
+```
+.small[Windows]
+```bash
+cd spark-hands-on-development
+activator backend/assembly
+```
+
+```bash
+spark-hands-on-development/modules/backend/target/scala-2.10/.jar
+```
+
 ---
 
-# クラスタの起動
+# クラスタの起動 - Master
+
+```
+spark-class org.apache.spark.deploy.master.Master
+```
+
+15/10/13 12:44:34 INFO Master: Starting Spark master at **spark://192.168.179.3:7077**
+
+???
+
+Masterを複数立ち上げる場合は Zookeeper を使う
+https://spark.apache.org/docs/latest/spark-standalone.html#standby-masters-with-zookeeper
+
+---
+
+# クラスタの起動 - Workers
+
+```
+spark-class org.apache.spark.deploy.worker.Worker spark://XXX.XXX.XXX.XXX:7077
+```
+
+* Masterのアドレスを指定する
+* Workerはいくつでも立ち上げることができる
 
 ---
 
 # クラスタへのSubmit
+
+```
+spark-submit --master spark://XXX.XXX.XXX.XXX:7077 /path/to/your.jar
+```
 
 ---
 
@@ -110,8 +159,6 @@ class: middle, center
 # Thank you!
 
 </textarea>
-    <script>
-      var slideshow = remark.create();
-    </script>
-  </body>
+<script> var slideshow = remark.create(); </script>
+</body>
 </html>
