@@ -30,7 +30,7 @@ Twitterハッシュタグのランキングを実況する<br>Webアプリを開
 
 ---
 
-# 自己紹介
+## 自己紹介
 
 * 根来 和輝 .small[Negoro Kazuki]
 * TIS株式会社 生産技術R＆D室
@@ -41,7 +41,7 @@ Twitterハッシュタグのランキングを実況する<br>Webアプリを開
 
 ---
 
-# Apache Sparkとは？
+## Apache Sparkとは？
 
 > Apache Spark™ is a fast and general engine for large-scale data processing.
 >
@@ -51,7 +51,7 @@ Twitterハッシュタグのランキングを実況する<br>Webアプリを開
 
 ---
 
-# Spark vs Hadoop
+## Spark vs Hadoop
 
 * Hadoop はストレージに書き込む、Sparkは基本的にインメモリ
 * Hadoopは高スループット重視、Sparkは低レイテンシ重視
@@ -60,11 +60,11 @@ Twitterハッシュタグのランキングを実況する<br>Webアプリを開
 
 ---
 
-# Spark のユースケース
+## Spark のユースケース
 
 ---
 
-# Spark のアーキテクチャ
+## Spark のアーキテクチャ
 
 * Executor の話
 * Worker と Cluster
@@ -79,7 +79,7 @@ class: fit-left
 background-image: url(img/screenshot.png)
 
 .glass-deep[
-# テーマ
+## テーマ
 ]
 
 ---
@@ -97,13 +97,13 @@ background-image: url(img/screenshot.png)
 
 ---
 
-# 構成
+## 構成
 
 .center[.size-80[![](img/app-architecture.svg)]]
 
 ---
 
-# アプリケーションの起動
+## アプリケーションの起動
 
 ```bash
 ### Mac OS X###
@@ -127,7 +127,7 @@ class: middle, center
 
 ---
 
-# 準備
+## 準備
 
 1. IntelliJ IDEA を起動
 1. **SparkLogic.scala** を開く
@@ -139,7 +139,7 @@ class: middle, center
 
 ---
 
-# 現在の実装
+## 現在の実装
 
 ~~~scala
 /**
@@ -174,7 +174,7 @@ def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelec
 
 ---
 
-# RDD?
+## RDD?
 
 * Resilient Distributed Datasets
 * 弾力性のある分散データセット
@@ -186,7 +186,7 @@ def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelec
 
 ---
 
-# 現在の実装
+## 現在の実装
 
 ~~~scala
 /**
@@ -221,7 +221,7 @@ def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelec
 
 ---
 
-# 現在の実装
+## 現在の実装
 
 ~~~scala
 /**
@@ -257,7 +257,7 @@ def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelec
 
 ---
 
-# 現在の実装
+## 現在の実装
 
 ~~~scala
 /**
@@ -293,7 +293,7 @@ def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelec
 
 ---
 
-# コンソール上で動きを確認
+## コンソール上で動きを確認
 
 * 都度ブラウザで確認するのは面倒なので<br>コマンドを用意しておきました
 
@@ -311,7 +311,7 @@ activator backend/print
 
 ---
 
-# 日本語のツイートを抽出
+## 日本語のツイートを抽出
 
 * `RDD#filter()` を使う
 * `filter()` には `String` を引数にとって `Boolean` を返す関数を渡す
@@ -328,6 +328,8 @@ activator backend/print
 ▶ `tweetsRDD` に `filter()` を適用してみる
 
 ---
+
+## 日本語のツイートを抽出
 
 ~~~scala
   // tweets.txt の中にある全ツイートの RDD
@@ -348,6 +350,8 @@ activator backend/print
 
 ---
 
+## 日本語のツイートを抽出
+
 ~~~scala
   // tweets.txt の中にある全ツイートの RDD
   val tweetsRDD: RDD[String] = sc.textFile(tweetsFilePath)
@@ -367,10 +371,12 @@ activator backend/print
 
 --
 
+.float-bottom[.glass-deep[
 ▶ `activator backend/print` で確認
+]]
 ---
 
-# ハッシュタグを抽出
+## ハッシュタグを抽出
 
 ~~~scala
 Ranking("#hashTag", rank = 1, Array(tweet), sampleCount = 1)
@@ -380,7 +386,7 @@ Ranking("#hashTag", rank = 1, Array(tweet), sampleCount = 1)
 
 ---
 
-# ハッシュタグを抽出
+## ハッシュタグを抽出
 
 ~~~scala
 // japaneseTweetsRDD: RDD[String]
@@ -402,7 +408,7 @@ Ranking("#hashTag", rank = 1, Array(tweet), sampleCount = 1)
 
 ---
 
-# ハッシュタグを抽出
+## ハッシュタグを抽出
 
 ~~~scala
 // japaneseTweetsRDD: RDD[String]
@@ -424,7 +430,7 @@ Ranking("#hashTag", rank = 1, Array(tweet), sampleCount = 1)
 
 ---
 
-# ハッシュタグを抽出
+## ハッシュタグを抽出
 
 ~~~scala
 // flatMap, map を使った場合
@@ -460,7 +466,7 @@ val rankingsRDD: RDD[Ranking] =
 
 ---
 
-# ハッシュタグでグループ分け
+## ハッシュタグでグループ分け
 
 ~~~scala
 ("#hashTag", "ツイートA #hashTag")
@@ -477,7 +483,7 @@ val rankingsRDD: RDD[Ranking] =
 
 ---
 
-# ハッシュタグでグループ分け
+## ハッシュタグでグループ分け
 
 ~~~scala
 val hashTagGroupsRDD: RDD[(String, Iterable[String])] =
@@ -495,7 +501,7 @@ val rankingsRDD: RDD[Ranking] =
 
 ---
 
-# ツイートの多い順にソート
+## ツイートの多い順にソート
 
 * `RDD#sortBy()` を使う
 * `tweets.size` の降順にしておく
@@ -519,7 +525,7 @@ val rankingsRDD: RDD[Ranking] =
 
 ---
 
-# ランクを設定
+## ランクを設定
 
 * `RDD#zipWithIndex()`
 * index は 0 始まりなので + 1 しておく
@@ -541,7 +547,7 @@ val rankingsRDD: RDD[Ranking] =
 
 ---
 
-# Streaming にチャレンジ
+## Streaming にチャレンジ
 
 * hashTagTweetPair までは同じ操作でOK
 * グループを作るときに window を作る
@@ -644,7 +650,7 @@ class: middle, center
 
 ---
 
-# 手順
+## 手順
 
 1. バックエンドの JAR(Java Archive) を作成
 1. Sparkのクラスタを起動
@@ -654,7 +660,7 @@ class: middle, center
 
 ---
 
-# バックエンドの JAR を作成
+## バックエンドの JAR を作成
 
 ```bash
 ### Mac OS X ###
@@ -677,7 +683,7 @@ cd modules\backend\target\scala-2.10\
 
 ---
 
-# クラスタの起動 - Master
+## クラスタの起動 - Master
 
 ```bash
 spark-class org.apache.spark.deploy.master.Master
@@ -697,7 +703,7 @@ https://spark.apache.org/docs/latest/spark-standalone.html#standby-masters-with-
 
 ---
 
-# クラスタの起動 - Workers
+## クラスタの起動 - Workers
 
 ```bash
 spark-class org.apache.spark.deploy.worker.Worker spark://192.168.179.3:7077
@@ -708,7 +714,7 @@ spark-class org.apache.spark.deploy.worker.Worker spark://192.168.179.3:7077
 
 ---
 
-# クラスタへの submit
+## クラスタへの submit
 
 ```bash
 # JAR があるディレクトリに移動
@@ -719,13 +725,13 @@ spark-submit --master spark://192.168.179.3:7077 twitter-hashtag-ranking-backend
 
 ---
 
-# 画面を確認
+## 画面を確認
 
 ブラウザで http://localhost:9000/ を開く
 
 ---
 
-# まとめ
+## まとめ
 
 * Spark は簡単に始められる
 * スケールアウトも簡単
@@ -737,7 +743,7 @@ class: middle, center
 
 ---
 
-# 書籍: 初めてのSpark
+## 書籍: 初めてのSpark
 
 .center[.size-30[![](img/learning-spark.jpg)]]
 .footnote[https://www.oreilly.co.jp/books/9784873117348/]
@@ -749,7 +755,7 @@ class: middle, center
 
 ---
 
-# リアクティブ・システム<br>コンサルティングサービス
+## リアクティブ・システム<br>コンサルティングサービス
 
 * Play / Akka / Slick / Scala / **Apache Spark**
   * 技術検証
