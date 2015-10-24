@@ -2,7 +2,7 @@
 
 .background-cover {
 
-  .remark-slide-content {
+  &.remark-slide-content {
     background-position: center !important;
     background-size: cover !important;
   }
@@ -84,24 +84,6 @@
   padding: 1px 0.25em;
 }
 
-.fit {
-
-  &.remark-slide-content {
-    padding: 0;
-  }
-}
-
-.fit-left {
-
-  &.remark-slide-content {
-    padding: 1em 6em 1em 0;
-  }
-
-  &.remark-slide-content > * {
-    padding: 0 2em;
-  }
-}
-
 .footnote {
   width: 85%;
   position: absolute;
@@ -137,15 +119,43 @@
   }
 }
 
-.fit-right {
+.fit {
 
   &.remark-slide-content {
-    padding: 1em 0 1em 6em;
+    padding: 0;
+  }
+}
+
+.fit-left {
+
+  &.remark-slide-content {
+    padding: 10px 60px 10px 0;
   }
 
   &.remark-slide-content > * {
-    padding: 0 2em;
+    padding: 0 0 0 40px;
   }
+}
+
+.fit-right {
+
+  &.remark-slide-content {
+    padding: 10px 0 10px 60px;
+  }
+
+  &.remark-slide-content > * {
+    padding: 0 40px 0 0;
+  }
+}
+
+.left-column {
+  width: 45%;
+  float: left;
+}
+
+.right-column {
+  width: 45%;
+  float: right;
 }
 
 .twitter-icon {

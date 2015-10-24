@@ -4,29 +4,28 @@
   <title>Apache Spark Hands-On Development</title>
   <meta charset="utf-8">
   <link rel="stylesheet" type="text/css" href="resources/light-theme.css" />
+  <link rel="stylesheet" type="text/css" href="resources/tech-circle.css" />
 </head>
 
 <style>
-  .left-column {
-    width: 45%;
-    float: left;
-  }
-  .right-column {
-    width: 45%;
-    float: right;
-  }
+
+
 </style>
 
 <body>
 <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js"></script>
 <textarea id="source">
-class: middle
+class: middle, fit-left, background-cover, tc-title
+background-image: url("img/NKJ56_kaigisuruahiruchan500.jpg")
 
-# Apache Spark <br>Hands-On Development
+# Apache Spark
+## Hands-On Development
+### @Tech-Circle #9
 
-Twitterハッシュタグのランキングを実況する<br>Webアプリを開発してみよう
+.float-bottom[.glass[
+Twitterハッシュタグのランキングを実況する Webアプリを開発してみよう
+]]
 
-.right[Tech-Circle #9]
 
 ---
 
@@ -35,39 +34,66 @@ Twitterハッシュタグのランキングを実況する<br>Webアプリを開
 * 根来 和輝 .small[Negoro Kazuki]
 * TIS株式会社 生産技術R＆D室
 * Reactive Platform の有効性検証
-    * Scala / Play / Slick / Akka / Spark
+    * Scala / Play / Slick / Akka / (Spark)
 
 .twitter-icon[[@negokaz](https://twitter.com/negokaz)] .github-icon[[negokaz](https://github.com/negokaz)]
 
 ---
 
-## Apache Sparkとは？
+## Apache Spark とは？
 
-> Apache Spark™ is a fast and general engine for large-scale data processing.
->
-> ![Spark vs Hadoop](http://spark.apache.org/images/logistic-regression.png)
+.center[![spark logo](img/spark-logo-hd.png)]
+
+* ビックデータのための並列分散処理基盤
+* オープンソースで開発されている
+* 最新のバージョンは 1.5.1 .small[(2015/10/24 現在)]
 
 .footnote[http://spark.apache.org/]
 
 ---
 
-## Spark vs Hadoop
+## .size-20[![spark](img/spark-logo-hd.png)] vs .size-40[![hadoop](img/hadoop.svg)] ![Spark vs Hadoop](img/logistic-regression.png)
 
-* Hadoop はストレージに書き込む、Sparkは基本的にインメモリ
-* Hadoopは高スループット重視、Sparkは低レイテンシ重視
-    * メモリの10倍・100倍とかなるデータ量だと Hadoop のほうが安定
-    * http://www.publickey1.jp/blog/15/apache_sparksparkntt.html
+
+* Hadoopは中間データを**ストレージ**に書き込む
+    * スループットを高めることを重視
+* Sparkは中間データを**メモリ**に書き込む
+    * レイテンシを低くすることを重視
+* メモリ総量の数十倍のデータ量を扱う場合は Hadoopが安定
+
+.footnote[http://www.publickey1.jp/blog/15/apache_sparksparkntt.html]
 
 ---
 
-## Spark のユースケース
+## Spark の導入事例
+
+* .small[[Data Driven-Toyota Customer 360 Insights on Apache Spark and MLlib](http://www.slideshare.net/SparkSummit/brian-kursar)]
+    * TOYOTA 米国法人
+    * SNS上の顧客の声を分析するのに利用
+    * Sparkを使うことによって36時間が9分に
+* .small[[社会の頭脳システムの構築と運用 Hadoopユーザから見たSPARK等の期待](http://www.slideshare.net/hadoopconf/hadoopspark-hadoop-conference-japan-2014)]
+    * NTTドコモ
 
 ---
 
 ## Spark のアーキテクチャ
 
-* Executor の話
-* Worker と Cluster
+![](img/cluster-overview.png)
+
+* Driver Program
+    * メインプロセス。SparkContextを起動する。
+* SparkContext
+    * クラスタへアクセスするための入り口となるオブジェクト。これからRDDを作る。
+* Cluster Manager
+    * クラスタのリソースを管理する。
+* Worker Node
+    * アプリケーションコードが実行されるノード。
+* Executor
+    * ワーカーノード上で起動するプロセス。Taskを実行したり中間データを保持する。
+* Task
+    * Executor上で実行される処理。
+
+.footnote[http://spark.apache.org/docs/latest/cluster-overview.html]
 
 ---
 class: middle, center
@@ -174,10 +200,12 @@ def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelec
 
 ---
 
-## RDD?
+## RDD ? - .small[Resilient Distributed Datasets]
 
-* Resilient Distributed Datasets
-* 弾力性のある分散データセット
+* 耐障害性のある分散データセット
+* イミュータブル
+* データはパーティションに分割され、各ノードに分散して配置される
+* **入力元のRDD**と**処理内容**の情報を持っているため 壊れても復旧可能
 
 .footnote[
 [Apache Spark - Resilient Distributed Datasets (RDDs)](http://spark.apache.org/docs/latest/programming-guide.html#resilient-distributed-datasets-rdds)
@@ -295,7 +323,7 @@ def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelec
 
 ## コンソール上で動きを確認
 
-* 都度ブラウザで確認するのは面倒なので<br>コマンドを用意しておきました
+* 毎回ブラウザで確認するのは手間なので<br>コマンドを用意しておきました
 
 ~~~bash
 ### Mac OS X ###
@@ -382,7 +410,7 @@ activator backend/print
 Ranking("#hashTag", rank = 1, Array(tweet), sampleCount = 1)
 ~~~
 
-最終的にハッシュタグと、そのハッシュタグを含んでいるツイートの配列のペアを作らないといけない
+最終的に、ハッシュタグとそのハッシュタグを 含んでいるツイートの配列のペアを作らないといけない
 
 ---
 
@@ -755,9 +783,16 @@ class: middle, center
 
 ---
 
+## 書籍: Apache Spark入門
+
+.center[.size-30[![](img/spark-japanese-book.jpg)]]
+.footnote[https://www.shoeisha.co.jp/book/detail/9784798142661]
+
+---
+
 ## リアクティブ・システム<br>コンサルティングサービス
 
-* Play / Akka / Slick / Scala / **Apache Spark**
+* Play / Akka / Slick / Scala
   * 技術検証
   * 設計レビュー
   * コードレビュー

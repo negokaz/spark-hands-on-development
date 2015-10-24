@@ -3,7 +3,7 @@
  *
  */
 @import "fonts.css";
-.background-cover .remark-slide-content {
+.background-cover.remark-slide-content {
   background-position: center !important;
   background-size: cover !important;
 }
@@ -74,15 +74,6 @@
 .middle > .glass {
   padding: 1px 0.25em;
 }
-.fit.remark-slide-content {
-  padding: 0;
-}
-.fit-left.remark-slide-content {
-  padding: 1em 6em 1em 0;
-}
-.fit-left.remark-slide-content > * {
-  padding: 0 2em;
-}
 .footnote {
   width: 85%;
   position: absolute;
@@ -111,11 +102,28 @@
 .float-bottom > * {
   padding: 0.25em 1em;
 }
+.fit.remark-slide-content {
+  padding: 0;
+}
+.fit-left.remark-slide-content {
+  padding: 10px 60px 10px 0;
+}
+.fit-left.remark-slide-content > * {
+  padding: 0 0 0 40px;
+}
 .fit-right.remark-slide-content {
-  padding: 1em 0 1em 6em;
+  padding: 10px 0 10px 60px;
 }
 .fit-right.remark-slide-content > * {
-  padding: 0 2em;
+  padding: 0 40px 0 0;
+}
+.left-column {
+  width: 45%;
+  float: left;
+}
+.right-column {
+  width: 45%;
+  float: right;
 }
 .twitter-icon * {
   list-style: none;
@@ -162,17 +170,18 @@
 }
 body {
   font-family: 'Noto Sans Japanese';
+  word-break: keep-all;
+}
+.remark-slide-content {
+  font-size: 32px;
+  padding: 1em 2em 1em 2em;
 }
 .remark-code {
-  font-size: 16px;
+  font-size: 0.5em;
   font-family: 'mplus-1m-regular';
 }
 .remark-inline-code {
   font-family: 'mplus-1m-regular';
-}
-.remark-slide-content {
-  font-size: 2em;
-  padding: 1em 2em 1em 2em;
 }
 .remark-slide-number {
   padding: 0 !important;
@@ -184,6 +193,7 @@ h4,
 h5,
 h6 {
   font-weight: 600;
+  white-space: nowrap;
 }
 code {
   padding: 0;
@@ -215,7 +225,7 @@ li {
 }
 /* -------------- */
 .remark-slide-content {
-  color: rgba(0, 0, 0, 0.54);
+  color: rgba(0, 0, 0, 0.7);
 }
 .remark-code-line-highlighted {
   background-color: rgba(84, 110, 122, 0.5);

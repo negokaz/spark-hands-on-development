@@ -1,0 +1,22 @@
+/*
+ * Tech-Circle用のスタイル
+ */
+@import url(https://fonts.googleapis.com/css?family=Viga);
+.tc-title h1,
+.tc-title h2,
+.tc-title h3 {
+  font-family: "Viga";
+  margin: 0;
+}
+.tc-title h1 {
+  font-size: 100px;
+}
+.tc-title h2 {
+  font-size: 75px;
+}
+.tc-title h3 {
+  font-size: 50px;
+}
+.tc-title h1::first-letter {
+  color: #4a86e8;
+}
