@@ -99,6 +99,28 @@ Welcome to
 Type --help for more information.
 ~~~
 
+#### Hadoop 2.6
+
+[Hadoop 2.6.0 Windows 64-bit Binaries](http://www.barik.net/archive/2015/01/19/172716/) から *hadoop-2.6.0.tar.gz* をダウンロードします。
+
+tgz ファイルを解凍し、解凍されたディレクトリを任意の場所に配置します。
+解凍したディレクトリのパスを環境変数 *HADOOP_HOME* として設定します。
+
+インストール後、下記のコマンドを実行して `%HADOOP_HOME%\bin\winutils.exe` が存在することを確認してください。
+
+`dir %HADOOP_HOME%\bin\winutils.exe /b`
+~~~
+winutils.exe
+~~~
+
+---
+
+※ これは Windows でのみ必要な手順です #2
+
+参考: [Apache SparkをTypesafe Activatorから試す #Windowsにはwinutils.exeが必要](http://qiita.com/pyr_revs/items/9bd4a1ef3f40a2f7a804#windows%E3%81%AB%E3%81%AFwinutilsexe%E3%81%8C%E5%BF%85%E8%A6%81)
+
+---
+
 #### IntelliJ IDEA 14
 
 [公式のダウンロードページ](https://www.jetbrains.com/idea/download/) から無料の Community Edition をダウンロードしてください。
