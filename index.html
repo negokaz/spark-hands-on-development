@@ -22,10 +22,9 @@ background-image: url("img/NKJ56_kaigisuruahiruchan500.jpg")
 ## Hands-On Development
 ### @Tech-Circle #9
 
-.float-bottom[.glass[
+.float-bottom-10[.glass[
 Twitterハッシュタグのランキングを実況する Webアプリを開発してみよう
 ]]
-
 
 ---
 
@@ -193,7 +192,7 @@ def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelec
 
 --
 
-.float-bottom[.glass-deep[
+.float-bottom-20[.glass-deep[
 * テキストファイルのデータからRDDを作成
 * .small[modules/backend/src/main/resources/tweets.txt]
 ]]
@@ -242,7 +241,7 @@ def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelec
 
 --
 
-.float-top[.glass-deep[
+.float-bottom-50[.glass-deep[
 * `map()` で `String` ⇒ `Ranking` に変換する
 * *Ranking* : hashTag, rank, sampleTweets, sampleCount を属性にもつ
 ]]
@@ -277,7 +276,7 @@ def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelec
 
 --
 
-.float-top[.glass-deep[
+.float-bottom-30[.glass-deep[
 * RDD の `collect()` を呼び出すことで RDD に定義した処理が初めて実行される
   * テキストファイルの読み込み
   * `map()` による `Ranking` への変換
@@ -313,7 +312,7 @@ def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelec
 
 --
 
-.float-middle[.glass-deep[
+.float-bottom-20[.glass-deep[
 * フロントエンドへ結果を返す
     * ここでは [Akka](http://akka.io/) の仕組みを使っている
     * 他の仕組みを使ってもOK
@@ -399,7 +398,7 @@ activator backend/print
 
 --
 
-.float-bottom[.glass-deep[
+.float-bottom-10[.glass-deep[
 ▶ `activator backend/print` で確認
 ]]
 ---
@@ -488,7 +487,7 @@ val rankingsRDD: RDD[Ranking] =
 
 --
 
-.float-bottom[.glass-deep[
+.float-bottom-20[.glass-deep[
 ▶ `activator backend/print` で確認
 ]]
 

@@ -17,3 +17,26 @@
       }
     }
 }
+
+.size (@size) {
+    height: @size;
+    width:  @size;
+}
+
+.float-top(@postiion) {
+  position: absolute;
+  top: @postiion;
+
+  > * {
+    padding: 0.25em 1em;
+  }
+}
+
+.float-bottom(@position) {
+  position: absolute;
+  bottom: @position;
+
+  > * {
+    padding: 0.25em 1em;
+  }
+}
