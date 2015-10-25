@@ -160,11 +160,11 @@ twitter-hashtag-ranking {
 
 IntelliJ IDEA のターミナルから下記のコマンドを実行してバックエンドサーバーを起動します。
 
-`./activator backend/run`
+`activator backend/run`
 
 同じように下記のコマンドを実行してフロントエンドサーバーを起動します。
 
-`./activator run`
+`activator run`
 
 ----
 
