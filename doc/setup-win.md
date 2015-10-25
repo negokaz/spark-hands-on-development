@@ -115,7 +115,7 @@ winutils.exe
 
 ---
 
-※ これは Windows でのみ必要な手順です #2
+※ これは Windows でのみ必要な手順です [issue:#2](https://github.com/negokaz/spark-hands-on-development/issues/2)
 
 参考: [Apache SparkをTypesafe Activatorから試す #Windowsにはwinutils.exeが必要](http://qiita.com/pyr_revs/items/9bd4a1ef3f40a2f7a804#windows%E3%81%AB%E3%81%AFwinutilsexe%E3%81%8C%E5%BF%85%E8%A6%81)
 
