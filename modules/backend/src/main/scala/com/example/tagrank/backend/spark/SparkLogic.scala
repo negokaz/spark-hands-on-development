@@ -40,21 +40,35 @@ object SparkLogic {
     val tweetsRDD: RDD[String] = sc.textFile(tweetsFilePath)
 
     // 1.日本語のツイートを抽出
+    val japaneseTweetsRDD =
+      tweetsRDD.filter(containsJapaneseChar)
 
     // 2.ハッシュタグを抽出
+    val hashTagTweetPairRDD: RDD[(String, String)] = for {
+      tweet   <- japaneseTweetsRDD
+      hashTag <- pickHashTags(tweet)
+    } yield (hashTag, tweet)
 
     // 3.ハッシュタグでグループ分け
+    val hashTagGroupsRDD: RDD[(String, Iterable[String])] =
+      hashTagTweetPairRDD.groupByKey()
 
     // 4.ツイートの多い順にソート
+    val sortedHashTagGroupsRDD: RDD[(String, Iterable[String])] =
+      hashTagGroupsRDD.sortBy({ case (_, tweets) =>
+        tweets.size
+      }, ascending = false)
 
     // 5.ランクを設定
+    val rankedHashTagGroupsRDD: RDD[((String, Iterable[String]), Long)] =
+      sortedHashTagGroupsRDD.zipWithIndex()
 
     // Ranking に変換する RDD
-    val rankingsRDD: RDD[Ranking] =
-      tweetsRDD map { tweet: String =>
-        // String を Ranking ケースクラスに変換
-        Ranking("#hashTag", rank = 1, Array(tweet), sampleCount = 1)
-      }
+    val rankingsRDD = rankedHashTagGroupsRDD map {
+      case ((hashTag, tweets), index) =>
+        // index は 0 開始 なので + 1 しておく
+        Ranking(hashTag, rank = index + 1, tweets.toArray, sampleCount = tweets.size)
+    }
 
     // collect() を呼び出すことによって実際の処理が始まる
     val rankings = rankingsRDD.collect()
