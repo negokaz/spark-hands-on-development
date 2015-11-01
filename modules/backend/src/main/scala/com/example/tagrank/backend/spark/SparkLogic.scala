@@ -16,7 +16,7 @@ object SparkLogic {
   /**
    * 解析に使う analyzeRanking, analyzeRankingWithStream のいずれかのメソッド名を指定してください
    */
-  val analyzeLogic: analyzeLogicType = analyzeRanking
+  val analyzeLogic: analyzeLogicType = analyzeRankingWithStream
 
   /**
    * クラスパス上にある tweets.txt のパス
