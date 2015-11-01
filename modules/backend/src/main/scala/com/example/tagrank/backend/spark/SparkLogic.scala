@@ -57,7 +57,10 @@ object SparkLogic {
    * ② Spark Streams を使ってリアルタイムにツイートを解析
    *
    * @param sc SparkContext です
-   * @param ssc SparkContext から作った StreamingContext です
+   * @param ssc SparkContext から作った StreamingContext です (下記のように定義しています)
+   *
+   *            val ssc = new StreamingContext(sc, Milliseconds(500))
+   *
    * @param receiver 解析した結果をこのオブジェクトに渡します
    */
   def analyzeRankingWithStream(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelection): Unit = {
