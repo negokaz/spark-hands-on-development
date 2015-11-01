@@ -36,17 +36,19 @@ object Debugger extends App with Config {
 
   actorSystem.actorOf(Props[SimpleDebugActor], "debugger")
 
-  SparkLogic.analyzeLogic(sc, ssc, actorSystem.actorSelection("/user/debugger"))
-
   ssc.awaitTermination()
-
 
   class SimpleDebugActor extends Actor {
 
     def receive = {
 
-      case msg: Iterable[_] =>
+      case msg: Array[_] =>
         msg.foreach(println)
+
+    }
+
+    override def preStart() = {
+      SparkLogic.analyzeLogic(sc, ssc, actorSystem.actorSelection("/user/debugger"))
     }
   }
 }
