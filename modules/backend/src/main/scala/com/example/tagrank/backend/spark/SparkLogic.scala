@@ -35,9 +35,7 @@ object SparkLogic {
    * @param receiver 解析した結果をこのオブジェクトに渡します
    */
   def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelection): Unit = {
-
-    println("do")
-
+    
     // tweets.txt の中にある全ツイートの RDD
     val tweetsRDD: RDD[String] = sc.textFile(tweetsFilePath)
 
