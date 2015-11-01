@@ -128,9 +128,10 @@ object SparkLogic {
       val rankedHashTagGroupsRDD: RDD[((String, Iterable[String]), Long)] =
         sortedHashTagGroupsRDD.zipWithIndex()
 
-        // Ranking に変換
+        // Ranking に変換する RDD
         val rankingsRDD = rankedHashTagGroupsRDD map {
           case ((hashTag, tweets), index) =>
+            // String を Ranking ケースクラスに変換
             // index は 0 開始 なので + 1 しておく
             Ranking(hashTag, rank = index + 1, tweets.toArray, sampleCount = tweets.size)
         }
