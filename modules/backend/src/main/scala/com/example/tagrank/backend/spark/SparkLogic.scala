@@ -54,7 +54,7 @@ object SparkLogic {
   }
 
   /**
-   * ② 2Spark Streams を使ってリアルタイムにツイートを解析
+   * ② Spark Streams を使ってリアルタイムにツイートを解析
    *
    * @param sc SparkContext です
    * @param ssc SparkContext から作った StreamingContext です
