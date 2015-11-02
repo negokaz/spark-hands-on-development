@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Apache Spark Hands-On Development</title>
   <meta charset="utf-8">
@@ -8,23 +9,49 @@
 </head>
 
 <style>
-
-
+.zero-margin * {
+  margin: 0;
+}
+.indent {
+  margin-left: 3em;
+}
 </style>
 
 <body>
 <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js"></script>
 <textarea id="source">
+# 前準備
+
+* 無線LANを接続してください
+* 最新版のソースを取得してください
+    ~~~
+    # spark-hands-on-development ディレクトリ直下で実行してください
+    # 最新の `step1` ブランチをチェックアウト
+    git fetch
+    git checkout step1
+    ~~~
+* チャットのアカウントを作ってください → [作成](http://chat.tech-circle-10.mydns.jp/signup)
+    * [フィードバックスレ](http://chat.tech-circle-10.mydns.jp/#/board/default/17592186045430) - 質問や気になることなど
+* ハッシュタグは #techcircleja です
+
+---
 class: middle, fit-left, background-cover, tc-title
 background-image: url("img/NKJ56_kaigisuruahiruchan500.jpg")
 
 # Apache Spark
 ## Hands-On Development
-### @Tech-Circle #9
+### @Tech-Circle #10
 
 .float-bottom-10.glass[
 Twitterハッシュタグのランキングを実況する Webアプリを開発してみよう
 ]
+
+???
+
+# TODO
+
+* Web UI
+* コンソール
 
 ---
 
@@ -33,7 +60,7 @@ Twitterハッシュタグのランキングを実況する Webアプリを開発
 * 根来 和輝 .small[Negoro Kazuki]
 * TIS株式会社 生産技術R＆D室
 * Reactive Platform の有効性検証
-    * Scala / Play / Slick / Akka / (Spark)
+    * Scala / Play / Slick / Akka
 
 .twitter-icon[[@negokaz](https://twitter.com/negokaz)] .github-icon[[negokaz](https://github.com/negokaz)]
 
@@ -44,15 +71,47 @@ Twitterハッシュタグのランキングを実況する Webアプリを開発
 .center[![spark logo](img/spark-logo-hd.png)]
 
 * ビックデータのための並列分散処理基盤
+* 大量にあるデータの集計や分析ができる
 * オープンソースで開発されている
-* 最新のバージョンは 1.5.1 .small[(2015/10/24 現在)]
+* 最新のバージョンは 1.5.1 .small[(2015/11 現在)]
 
 .footnote[http://spark.apache.org/]
 
 ---
 
-## .size-20[![spark](img/spark-logo-hd.png)] vs .size-40[![hadoop](img/hadoop.svg)] ![Spark vs Hadoop](img/logistic-regression.png)
+## Apache Spark とは？
 
+データを処理するための様々なライブラリを提供
+.left-column[
+.size-100[![](img/spark-stack.png)]
+]
+
+<div class="highlight" style="width:8.6em;height:4em;top:7.7em;left:5em;"></div>
+
+.right-column[
+* Spark Streaming
+  * ストリーム処理
+* MLlib
+  * 機械学習
+* GraphX
+  * グラフ処理
+]
+
+--
+
+.float-bottom-10.glass-deep[
+それぞれのライブラリを組み合わせて 複雑な処理を実装できる。
+]
+
+???
+
+## グラフ処理
+
+*
+
+---
+
+## .size-20[![spark](img/spark-logo-hd.png)] vs .size-40[![hadoop](img/hadoop.svg)] ![Spark vs Hadoop](img/logistic-regression.png)
 
 * Hadoopは中間データを**ストレージ**に書き込む
     * スループットを高めることを重視
@@ -60,66 +119,60 @@ Twitterハッシュタグのランキングを実況する Webアプリを開発
     * レイテンシを低くすることを重視
 * メモリ総量の数十倍のデータ量を扱う場合は Hadoopが安定
 
-.footnote[http://www.publickey1.jp/blog/15/apache_sparksparkntt.html]
+.footnote.small[[Apache Sparkがスループットとレイテンシを両立させた仕組みと 最新動向をSparkコミッタとなったNTTデータ猿田氏に聞いた](http://www.publickey1.jp/blog/15/apache_sparksparkntt.html)]
 
 ---
 
-## Spark の導入事例
+## Sparkの導入事例
 
-* .small[[Data Driven-Toyota Customer 360 Insights on Apache Spark and MLlib](http://www.slideshare.net/SparkSummit/brian-kursar)]
+* .small[[Real-Time Recommendations using Spark](https://spark-summit.org/east-2015/talk/real-time-recommendations-using-spark)]
+    * 米 Comcast Labs.
+    * 好みに合わせた番組のリアルタイムレコメンド
+    * MLlib と Spark Streaming を組み合わせ
+* .small[[Data Driven-Toyota Customer 360 Insights on Apache Spark and MLlib](https://spark-summit.org/2015/events/keynote-7/)]
     * TOYOTA 米国法人
     * SNS上の顧客の声を分析するのに利用
     * Sparkを使うことによって36時間が9分に
-* .small[[社会の頭脳システムの構築と運用 Hadoopユーザから見たSPARK等の期待](http://www.slideshare.net/hadoopconf/hadoopspark-hadoop-conference-japan-2014)]
-    * NTTドコモ
+
+???
+
+## Comcast Labs.
+
+* ユーザーの視聴履歴をMLlibでバッチ処理。ユーザーをクラスタリング。
+* Spark Streaming を使ってユーザーのクラスタごとの選局状況を取得し、レコメンド。
+
+## TOYOTA 米国法人
+
+* 普通のバッチ → Spark
+* 同じように Streaming と MLlib を組み合わせ
 
 ---
 
-## Spark のアーキテクチャ
+## Sparkのユースケース
 
-.left-column[
-.size-100[![](img/cluster-overview.png)]
-
-.footnote[http://spark.apache.org/docs/latest/cluster-overview.html]
-]
-.right-column.small[
-* Driver Program
-    * メインプロセス。SparkContextを起動する。
-* SparkContext
-    * クラスタへアクセスするための入り口となるオブジェクト。これからRDDを作る。
-* Cluster Manager
-    * クラスタのリソースを管理する。
-* Worker Node
-    * アプリケーションコードが実行されるノード。
-* Executor
-    * ワーカーノード上で起動するプロセス。Taskを実行したり中間データを保持する。
-* Task
-    * Executor上で実行される処理。
-]
+* 1台のサーバーではまかないきれないデータを 集計・分析したい
+    * クラスタの総メモリサイズに収まるデータ量
+* 将来的にデータ量が増える可能性がある
 
 ---
+
 class: middle, center
 
 # Hands-On
 
 ---
-class: fit-left
-background-image: url(img/screenshot.png)
 
-.glass-deep[
-## テーマ
-]
+## これから開発するアプリ
 
----
-class: middle
-background-image: url(img/screenshot.png)
+.size-100[![](img/screenshot.png)]
 
-.glass-deep[
+--
+
+.float-top-0.glass-deep[
 ハッシュタグのランキングを実況するWebアプリ
 * たくさんTweetされた順にハッシュタグを表示
     * 順位、Tweet数 が確認できる
 * ハッシュタグをクリックするとTweetが見れる
-
 .right.small[[Twitter - そもそも＃ハッシュタグって何？](https://support.twitter.com/articles/20170159-#whatis)]
 ]
 ---
@@ -150,7 +203,8 @@ activator run
 ---
 class: middle, center
 
-# Spark でプログラミング
+# Sparkでプログラミング ①
+## 静的データを処理する
 
 ---
 
@@ -161,7 +215,7 @@ class: middle, center
 
 .small[
 * modules > backend > src > main > scala > com.example.tagrank.backend > spark
-* Shift × 2 で SparkLogic.scala を入力すると簡単に検索できる
+* Shift × 2 で SparkLogic.scala を入力すると簡単に検索できます
 ]
 
 ---
@@ -194,7 +248,7 @@ def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelec
 
 --
 
-.float-bottom-20.glass-deep[
+.float-bottom-10.glass-deep[
 * テキストファイルのデータからRDDを作成
 * .small[modules/backend/src/main/resources/tweets.txt]
 ]
@@ -206,7 +260,7 @@ def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelec
 * 耐障害性のある分散データセット
 * イミュータブル
 * データはパーティションに分割され、各ノードに分散して配置される
-* **入力元のRDD**と**処理内容**の情報を持っているため 壊れても復旧可能
+* .accent[入力元のRDD]と.accent[処理内容]の情報を持っているため 壊れても復旧可能
 
 .footnote[
 [Apache Spark - Resilient Distributed Datasets (RDDs)](http://spark.apache.org/docs/latest/programming-guide.html#resilient-distributed-datasets-rdds)
@@ -314,10 +368,11 @@ def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelec
 
 --
 
-.float-bottom-20.glass-deep[
+.float-bottom-30.glass-deep[
 * フロントエンドへ結果を返す
-    * ここでは [Akka](http://akka.io/) の仕組みを使っている
-    * 他の仕組みを使ってもOK
+    * ここでは[Akka](http://akka.io/)のメッセージパッシングを使っている
+    * ただの配列になっているので他の方法でもOK
+        * REST APIにする・DBに保存 etc...
 ]
 
 ---
@@ -340,25 +395,21 @@ activator backend/print
 
 ---
 
-## 日本語のツイートを抽出
+## 日本語のツイートを抽出 - .small[使うもの]
 
 * `RDD#filter()` を使う
 * `filter()` には `String` を引数にとって `Boolean` を返す関数を渡す
-  * .accent[true] になった要素だけの RDD に変換される
+  * .accent[true] になる要素だけの RDD が生成される
 
 .footnote[[Scala API - RDD](http://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.rdd.RDD)]
 
---
-
 * `def containsJapaneseChar(s: String): Boolean`<br> を用意しておきました
-
---
 
 ▶ `tweetsRDD` に `filter()` を適用してみる
 
 ---
 
-## 日本語のツイートを抽出
+## 日本語のツイートを抽出 - .small[実装]
 
 ~~~scala
   // tweets.txt の中にある全ツイートの RDD
@@ -379,7 +430,7 @@ activator backend/print
 
 ---
 
-## 日本語のツイートを抽出
+## 日本語のツイートを抽出 - .small[実装]
 
 ~~~scala
   // tweets.txt の中にある全ツイートの RDD
@@ -398,59 +449,62 @@ activator backend/print
 ~~~
 * `Ranking` へは `japaneseTweetsRDD` から変換するように書き換えておく
 
---
+---
 
-.float-bottom-10.glass-deep[
-▶ `activator backend/print` で確認
+## ハッシュタグを抽出 - .small[設計]
+
+~~~scala
+Ranking("#hashTag", rank = ???, Array(tweet), sampleCount = ???)
+~~~
+
+最終的に、.accent[ハッシュタグ]とそのハッシュタグを 含んでいる.accent[ツイートの配列]のペアを作らないといけない
+
+---
+
+## ハッシュタグを抽出 - .small[設計]
+
+.zero-margin[
+~~~scala
+// japaneseTweetsRDD: RDD[String]
+"ツイートA #hashTag1"
+"ツイートB #hashTag1 #hashTag2"
+~~~
+.indent[▼ .small[ハッシュタグとツイートのペアを作成]]
+~~~scala
+("#hashTag1", "ツイートA #hashTag1")
+("#hashTag1", "ツイートB #hashTag1 #hashTag2")
+("#hashTag2", "ツイートB #hashTag1 #hashTag2")
+~~~
+.indent[▼ .small[同じハッシュタグでグループ分け]]
+~~~scala
+("#hashTag1", ["ツイートA #hashTag1", "ツイートB #hashTag1 #hashTag2"])
+("#hashTag2", ["ツイートB #hashTag1 #hashTag2"])
+~~~
+.indent[▼ .small[`Ranking`に変換]]
+~~~scala
+Ranking("#hashTag1", rank = ???, ["ツイートA #hashTag1", "ツイートB #hashTag1 #hashTag2"], sampleCount = 2)
+Ranking("#hashTag2", rank = ???, ["ツイートB #hashTag1 #hashTag2"], sampleCount = 1)
+~~~
 ]
----
-
-## ハッシュタグを抽出
-
-~~~scala
-Ranking("#hashTag", rank = 1, Array(tweet), sampleCount = 1)
-~~~
-
-最終的に、ハッシュタグとそのハッシュタグを 含んでいるツイートの配列のペアを作らないといけない
 
 ---
 
-## ハッシュタグを抽出
-
+## ハッシュタグを抽出 - .small[使うもの]
+.zero-margin[
 ~~~scala
 // japaneseTweetsRDD: RDD[String]
-"ツイートA #hashTag"
-"ツイートB #hashTag"
-"ツイートC #hashTag"
+"ツイートA #hashTag1"
+"ツイートB #hashTag1 #hashTag2"
 ~~~
+.indent[▼ .small[ハッシュタグとツイートのペアを作成]]
 ~~~scala
-("#hashTag", "ツイートA #hashTag")
-("#hashTag", "ツイートB #hashTag")
-("#hashTag", "ツイートC #hashTag")
+("#hashTag1", "ツイートA #hashTag1")
+("#hashTag1", "ツイートB #hashTag1 #hashTag2")
+("#hashTag2", "ツイートB #hashTag1 #hashTag2")
 ~~~
-~~~scala
-("#hashTag", ["ツイートA #hashTag", "ツイートB #hashTag", "ツイートC #hashTag"])
-~~~
-~~~scala
-Ranking("#hashTag", rank = 1, Array(tweet), sampleCount = 1)
-~~~
-
----
-
-## ハッシュタグを抽出
-
-~~~scala
-// japaneseTweetsRDD: RDD[String]
-"ツイートA #hashTag"
-"ツイートB #hashTag"
-"ツイートC #hashTag"
-~~~
-~~~scala
-("#hashTag", "ツイートA #hashTag")
-("#hashTag", "ツイートB #hashTag")
-("#hashTag", "ツイートC #hashTag")
-~~~
+]
 --
+
 * `RDD#flatMap()`, `RDD#map()` を使う
     * for式でシンプルに記述できる
 * `def pickHashTags(s: String): Set[String]`<br>を用意しておきました
@@ -459,7 +513,7 @@ Ranking("#hashTag", rank = 1, Array(tweet), sampleCount = 1)
 
 ---
 
-## ハッシュタグを抽出
+## ハッシュタグを抽出 - .small[実装]
 
 ~~~scala
 // flatMap, map を使った場合
@@ -469,16 +523,13 @@ val hashTagTweetPairRDD: RDD[(String, String)] =
       (hashTag, tweet)
     }
   }
-// for式を使った場合 (上記のシンタックスシュガー)
+// for式を使った場合
 val hashTagTweetPairRDD: RDD[(String, String)] =
   for {
     tweet   <- japaneseTweetsRDD
     hashTag <- pickHashTags(tweet)
   } yield (hashTag, tweet)
 ~~~
-
---
-
 ~~~scala
 // Ranking に変換する RDD
 val rankingsRDD: RDD[Ranking] =
@@ -487,24 +538,22 @@ val rankingsRDD: RDD[Ranking] =
   }
 ~~~
 
---
-
-.float-bottom-20.glass-deep[
-▶ `activator backend/print` で確認
-]
-
 ---
 
-## ハッシュタグでグループ分け
+## ハッシュタグでグループ分け - .small[使うもの]
 
+.zero-margin[
 ~~~scala
-("#hashTag", "ツイートA #hashTag")
-("#hashTag", "ツイートB #hashTag")
-("#hashTag", "ツイートC #hashTag")
+("#hashTag1", "ツイートA #hashTag1")
+("#hashTag1", "ツイートB #hashTag1 #hashTag2")
+("#hashTag2", "ツイートB #hashTag1 #hashTag2")
 ~~~
+.indent[▼ .small[同じハッシュタグでグループ分け]]
 ~~~scala
-("#hashTag", ["ツイートA #hashTag", "ツイートB #hashTag", "ツイートC #hashTag"])
+("#hashTag1", ["ツイートA #hashTag1", "ツイートB #hashTag1 #hashTag2"])
+("#hashTag2", ["ツイートB #hashTag1 #hashTag2"])
 ~~~
+]
 * `RDD#groupByKey()`
     * タプルの1番目をキーとしてグループ分けされる
 
@@ -512,13 +561,12 @@ val rankingsRDD: RDD[Ranking] =
 
 ---
 
-## ハッシュタグでグループ分け
+## ハッシュタグでグループ分け - .small[実装]
 
 ~~~scala
 val hashTagGroupsRDD: RDD[(String, Iterable[String])] =
   hashTagTweetPairRDD.groupByKey()
 ~~~
---
 ~~~scala
 // Ranking に変換する RDD
 val rankingsRDD: RDD[Ranking] =
@@ -526,7 +574,7 @@ val rankingsRDD: RDD[Ranking] =
 *   Ranking(hashTag, rank = 1, tweets.toArray, sampleCount = tweets.size)
   }
 ~~~
-▶ `activator backend/print` で確認
+* `sampleCount`には`tweets.size`を設定しておく
 
 ---
 
@@ -576,17 +624,32 @@ val rankingsRDD: RDD[Ranking] =
 
 ---
 
-## Streaming にチャレンジ
+## 解答
 
-* hashTagTweetPair までは同じ操作でOK
-* グループを作るときに window を作る
-* foreachRDD 内で sortedHashTagGroup 以降をやる
-* ssc.start() を呼ぶ
+実装が間に合わなかった場合は下記コマンドで 解答をチェックアウトしてください
+
+~~~bash
+# spark-hands-on-development ディレクトリの直下で実行してください
+git commit -am "「Sparkでプログラミング ①」の途中まで実装"
+git checkout step2
+~~~
+.small[※ 途中の作業は `step1` ブランチに保存されます]
+
+---
+class: middle, center
+
+# Sparkでプログラミング ②
+## ストリームデータを処理する
 
 ---
 
+## 現在の実装
+
 ~~~scala
-def prepareTwitterStreaming(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelection): Unit = {
+/**
+ * ② Spark Streams を使ってリアルタイムにツイートを解析
+ */
+def analyzeRankingWithStream(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelection): Unit = {
 
   // Twitter の DStream
   val twitterStream: ReceiverInputDStream[Status] =
@@ -598,84 +661,173 @@ def prepareTwitterStreaming(sc: SparkContext, ssc: StreamingContext, receiver: A
       status.getText
     }
 
-  // 日本語を含むツイートを抽出する DStream
-  val japaneseTweetStream: DStream[String] =
-    tweetStream.filter(containsJapaneseChar)
-
-  // ハッシュタグとツイートのペアを作る DStream
-  val hashTagTweetPairStream: DStream[(String, String)] =
-    for {
-      tweet   <- japaneseTweetStream
-      hashTag <- pickHashTags(tweet)
-    } yield (hashTag, tweet)
+  // ストリームの塊を処理する
+  tweetStream.foreachRDD { rdd: RDD[String] =>
+  /* …省略… */
 }
 ~~~
-* `RDD` → `DStream` に変わっただけでほぼ同じ
 
-~~~
+--
 
----
-
-~~~scala
-// ペアの1番目をキーとしてツイートのグループを作る DStream
-// Window を設定
-val hashTagGroupsStream: DStream[(String, Iterable[String])] =
-  hashTagTweetPairStream.groupByKeyAndWindow(Minutes(3), Seconds(1))
-~~~
+.float-bottom-60.glass-deep[
+* DStream の API を通してストリームを操作する
+* `foreachRDD`でストリームから`RDD`を取り出せる
+]
 
 ---
+
+## DStream ? - Discretized Stream
+
+* 離散化ストリーム
+* 連続するRDDの集合
+    * RDDはバッチインターバルの間の入力データを持つ
+    * バッチインターバルは`StreamingContext`に設定
+* RDDと似たAPIを持つ
+
+.footnote[[Apache Spark - Discretized Streams (DStreams)](http://spark.apache.org/docs/latest/streaming-programming-guide.html#discretized-streams-dstreams)([Scala API](https://spark.apache.org/docs/1.5.1/api/java/org/apache/spark/streaming/dstream/DStream.html))]
+---
+
+## 現在の実装
+
 ~~~scala
-val hashTagTweetPairStream: DStream[(String, String)] = ...
+/**
+ * ② Spark Streams を使ってリアルタイムにツイートを解析
+ */
+def analyzeRankingWithStream(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelection): Unit = {
 
-// ストリームの塊を処理する
-hashTagGroupsStream.foreachRDD { rdd: RDD[(String, Iterable[String])] =>
+  /* …省略… */
 
-    // ツイートの数でソートする RDD
-    val sortedHashTagGroupsRDD: RDD[(String, Iterable[String])] =
-      rdd.sortBy({ case (_, tweets) =>
-        tweets.size
-      }, ascending = false)
+  // ストリームの塊を処理する
+  tweetStream.foreachRDD { rdd: RDD[String] =>
+      // Ranking に変換する RDD
+      val rankingsRDD = rdd map { tweet: String =>
+          // String を Ranking ケースクラスに変換
+          Ranking("#hashTag", rank = 1, Array(tweet), sampleCount = 1)
+      }
+      // collect() を呼び出すことによって実際の RDD の処理が始まる
+      val rankings = rankingsRDD.collect()
 
-    // ソートされた各要素にインデックスを付ける RDD
-    val rankedHashTagGroupsRDD =
-      sortedHashTagGroupsRDD.zipWithIndex()
-
-    // Ranking に変換する RDD
-    val rankingsRDD = rankedHashTagGroupsRDD map {
-      case ((hashTag, tweets), index) =>
-        // String を Ranking ケースクラスに変換
-        Ranking(hashTag, rank = index + 1, tweets.toArray, sampleCount = tweets.size)
+      receiver ! rankings
     }
 
-    // collect() を呼び出すことによって実際の RDD の処理が始まる
-    val rankings = rankingsRDD.collect()
+  // start() を呼び出すことによって上記で定義した Stream の処理が始まる
+  ssc.start()
+}
 
-    receiver ! rankings
-  }
 ~~~
 
-* 同じコードを `foreachRDD()` の中に書く
+--
+
+.float-bottom-50.glass-deep[
+* `foreachRDD`で取り出したRDDには バッチインターバルのデータが含まれている
+* バッチインターバル以上の時間幅の集計も可能
+]
 
 ---
 
-~~~scala
-def prepareTwitterStreaming(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelection): Unit = {
-  ...
-  // ストリームの塊を処理する
-  hashTagGroupsStream.foreachRDD { rdd: RDD[(String, Iterable[String])] =>
-    ...
-  }
+## ストリームデータの集計
 
-  // start() を呼び出すことによって実際の Stream の処理が始まる
-* ssc.start()
-}
+.zero-margin[
+~~~scala
+// ペアの1番目をキーとしてツイートのグループを作る DStream
+val hashTagGroupsStream: DStream[(String, Iterable[String])] =
+  hashTagTweetPairStream.groupByKey()
 ~~~
-▶ `activator backend/print` で確認
+* ⇒ 500ミリ秒(バッチインターバル)ごとのツイートが集計される
+* 過去何分かの集計を表示したい場合は `DStream#groupByKeyAndWindow`を使って ウィンドウ集計する。↓
+~~~scala
+// ペアの1番目をキーとしてツイートのグループを作る DStream
+val hashTagGroupsStream: DStream[(String, Iterable[String])] =
+  hashTagTweetPairStream
+      .groupByKeyAndWindow(windowDuration = Minutes(1), slideDuration = Seconds(1))
+~~~
+]
+
+---
+
+## ウィンドウ集計
+
+.size-80[![](img/streaming-window.svg)]
+
+???
+
+* 時間に任意の幅を持たせて集計できるようになる
+* 例えば「過去1分間のハッシュタグのランキングを1秒ごとに求めたい」
+    * ⇒ window幅 に Minutes(1), slide幅 に Seconds(1) を指定する
+    * window幅とslide幅はバッチインターバルの倍数である必要がある
+* ブルーの箱の幅がバッチインターバル
+* 薄いオレンジの破線の枠が最初の集計グループ
+* 濃いオレンジの枠が次の集計グループ
+
+
+---
+## 実装してみよう
+
+* `DStream#filter`で日本語のツイートを抽出
+* `for` or `DStream#map`, `DStream#flatMap` でハッシュタグ・ツイートのペアを作成
+* `DStream#groupByKeyAndWindow`で 過去1分間の集計を1秒ごとに行う
+* 集計したものを`DStream#foreachRDD`の中で
+    * ソートしインデックスを付与
+    * `Ranking`に変換
+
+---
+
+## 実装してみよう
+
+`analyzeLogic`を書き換えて確認してください
+
+.zero-margin[
+~~~scala
+val analyzeLogic: analyzeLogicType = analyzeRanking
+~~~
+.center[▼]
+~~~scala
+val analyzeLogic: analyzeLogicType = analyzeRankingWithStream
+~~~
+]
+
+---
+
+
+## 解答
+
+実装が間に合わなかった場合は下記コマンドで 解答をチェックアウトしてください
+
+~~~bash
+# spark-hands-on-development ディレクトリの直下で実行してください
+git commit -am "「Sparkでプログラミング ②」の途中まで実装"
+git checkout step3
+~~~
+.small[※ 途中の作業は `step2` ブランチに保存されます]
 
 ---
 class: middle, center
 
-# Spark のクラスタを作る
+# Sparkのクラスタを作る
+
+---
+
+## Sparkのクラスタアーキテクチャ
+
+.left-column[
+.size-100[![](img/cluster-overview.png)]
+
+.footnote[http://spark.apache.org/docs/latest/cluster-overview.html]
+]
+.right-column.small[
+* Driver Program
+    * アプリケーションのメインプロセス。SparkContextを起動する。
+* SparkContext
+    * クラスタへアクセスするための入り口となるオブジェクト。これからRDDを作る。
+* Cluster Manager
+    * クラスタのリソースを管理する。
+* Worker Node
+    * アプリケーションコードが実行されるノード。
+* Executor
+    * ワーカーノード上で起動するプロセス。Taskを実行したり中間データを保持する。
+* Task
+    * Executor上で実行される処理。
+]
 
 ---
 
@@ -689,15 +841,15 @@ class: middle, center
 
 ---
 
-## バックエンドの JAR を作成
+## バックエンドのJARを作成
 
 ```bash
 ### Mac OS X ###
 cd spark-hands-on-development
 # JAR を作成
 ./activator backend/assembly
-# JAR の出力先に移動
-cd modules/backend/target/scala-2.10/
+# JAR が作成できていることを確認
+ls modules/backend/target/scala-2.10/
 ```
 
 ```bash
@@ -705,10 +857,10 @@ cd modules/backend/target/scala-2.10/
 cd spark-hands-on-development
 # JAR を作成
 activator backend/assembly
-# JAR の出力先に移動
-cd modules\backend\target\scala-2.10\
+# JAR が作成できていることを確認
+dir modules\backend\target\scala-2.10\
 ```
-.small[▶ **twitter-hashtag-ranking-backend-assembly-1.0.0.jar**]
+.small[▶ twitter-hashtag-ranking-backend-assembly-1.0.0.jar]
 
 ---
 
@@ -756,19 +908,43 @@ spark-submit --master spark://192.168.179.3:7077 twitter-hashtag-ranking-backend
 
 ## 画面を確認
 
-ブラウザで http://localhost:9000/ を開く
+フロントエンドの起動
+~~~bash
+### Mac OS X ###
+cd spark-hands-on-development
+./activator run
+~~~
+~~~bash
+### Windows ###
+cd spark-hands-on-development
+activator run
+~~~
 
+▶ブラウザで http://localhost:9000/ を開く
+
+---
+
+## クラスタマネージャーの種類
+
+* [Spark Standalone](http://spark.apache.org/docs/latest/spark-standalone.html)
+    * Sparkのパッケージに含まれるクラスタマネージャ。簡単にクラスタを構築できる。
+* [Apache Mesos](http://spark.apache.org/docs/latest/running-on-mesos.html)
+    * 汎用クラスタマネージャ。
+* [Hadoop YARN](http://spark.apache.org/docs/latest/running-on-yarn.html)
+    * Hadoopのリソースマネージャ。
+
+.footnote[[Cluster Manager Types](http://spark.apache.org/docs/latest/cluster-overview.html#cluster-manager-types)]
 ---
 
 ## まとめ
 
-* Spark は簡単に始められる
-* スケールアウトも簡単
-* 実際に運用していくにはチューニングの知識が必要
+* 分散処理が簡単にプログラミングできる
+* ライブラリを組み合わせることで実現できることの 幅が広がる
+* スケールアウトを簡単に実現できる
 
 ---
 class: middle, center
-# 参考
+# 参考情報
 
 ---
 
@@ -791,15 +967,20 @@ class: middle, center
 
 ---
 
-## リアクティブ・システム<br>コンサルティングサービス
+## TIS㈱ リアクティブ・システム<br>コンサルティングサービス
 
-* Play / Akka / Slick / Scala
+* Typesafe のコンサルティングパートナー
+* Reactive Platform .small[(Play / Akka / Slick / Scala)]
   * 技術検証
   * 設計レビュー
   * コードレビュー
   * システム構築
 
-.footnote[https://www.tis.jp/service_solution/goreactive/]
+.footnote[
+.small[※ Spark は近い将来ラインナップします！！]
+
+https://www.tis.jp/service_solution/goreactive/
+]
 
 ---
 class: middle, center
