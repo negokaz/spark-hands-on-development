@@ -4,20 +4,33 @@
 <head>
   <title>Apache Spark Hands-On Development</title>
   <meta charset="utf-8">
+  <link rel="shortcut icon" href="resources/favicon.ico">
   <link rel="stylesheet" type="text/css" href="resources/light-theme.css" />
   <link rel="stylesheet" type="text/css" href="resources/tech-circle.css" />
+  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+  <script src="resources/jquery.qrcode.min.js"></script>
 </head>
 
 <style>
-.zero-margin * {
-  margin: 0;
-}
-.indent {
-  margin-left: 3em;
-}
+
+  .zero-margin * {
+    margin: 0;
+  }
+  .indent {
+    margin-left: 3em;
+  }
+
+  @media print {
+    remote-controller {
+      visibility: hidden;
+    }
+  }
+
 </style>
 
 <body>
+<label for="enable-sync" class="remote-controller subscribe-control">スライドを同期:</label>
+<input type="checkbox" id="enable-sync" class="remote-controller subscribe-control" checked />
 <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js"></script>
 <textarea id="source">
 # 前準備
@@ -46,23 +59,21 @@ background-image: url("img/NKJ56_kaigisuruahiruchan500.jpg")
 Twitterハッシュタグのランキングを実況する Webアプリを開発してみよう
 ]
 
-???
-
-# TODO
-
-* Web UI
-* コンソール
-
 ---
 
-## 自己紹介
+## 私は何者？
 
 * 根来 和輝 .small[Negoro Kazuki]
 * TIS株式会社 生産技術R＆D室
-* Reactive Platform の有効性検証
+* Typesafe Reactive Platform の有効性検証
     * Scala / Play / Slick / Akka
 
 .twitter-icon[[@negokaz](https://twitter.com/negokaz)] .github-icon[[negokaz](https://github.com/negokaz)]
+
+???
+
+* Reactive Platform の検証
+    * SI でどのようにすれば活用できるか？
 
 ---
 
@@ -76,6 +87,11 @@ Twitterハッシュタグのランキングを実況する Webアプリを開発
 * 最新のバージョンは 1.5.1 .small[(2015/11 現在)]
 
 .footnote[http://spark.apache.org/]
+
+???
+
+* Apache の トップレベルプロジェクト
+* 近年とても注目されているプロジェクト
 
 ---
 
@@ -97,17 +113,17 @@ Twitterハッシュタグのランキングを実況する Webアプリを開発
   * グラフ処理
 ]
 
+???
+
+* グラフ処理
+    * 最短距離を求める
+    * ソーシャルグラフ - 友達の友達は誰？
+
 --
 
 .float-bottom-10.glass-deep[
 それぞれのライブラリを組み合わせて 複雑な処理を実装できる。
 ]
-
-???
-
-## グラフ処理
-
-*
 
 ---
 
@@ -154,6 +170,11 @@ Twitterハッシュタグのランキングを実況する Webアプリを開発
     * クラスタの総メモリサイズに収まるデータ量
 * 将来的にデータ量が増える可能性がある
 
+???
+
+* スケーラリビティ
+    * プログラムを書き換えずに分散させる台数を増やせる
+
 ---
 
 class: middle, center
@@ -182,41 +203,31 @@ class: middle, center
 .center[.size-80[![](img/app-architecture.svg)]]
 
 ---
-
-## アプリケーションの起動
-
-```bash
-### Mac OS X###
-cd spark-hands-on-development
-./activator backend/run
-./activator run
-```
-```bash
-### Windows ###
-cd spark-hands-on-development
-activator backend/run
-activator run
-```
-
-▶ ブラウザで http://localhost:9000/ を開く
-
----
 class: middle, center
 
 # Sparkでプログラミング ①
 ## 静的データを処理する
+
+???
+
+Sparkの基本的なところを知るためにまずは、静的なデータの解析をしてみましょう。
+事前にテキストファイルに落としておいたツイートのデータを解析してみます。
 
 ---
 
 ## 準備
 
 1. IntelliJ IDEA を起動
-1. **SparkLogic.scala** を開く
+1. .accent[SparkLogic.scala] を開く
 
 .small[
 * modules > backend > src > main > scala > com.example.tagrank.backend > spark
 * Shift × 2 で SparkLogic.scala を入力すると簡単に検索できます
 ]
+
+???
+
+色んなファイルを見に行くと手間なので、今回触るファイルはこれだけです。
 
 ---
 
@@ -246,6 +257,11 @@ def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelec
 }
 ~~~
 
+???
+
+* analyzeRanking 何行目？
+    * 37行目
+
 --
 
 .float-bottom-10.glass-deep[
@@ -266,6 +282,12 @@ def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelec
 [Apache Spark - Resilient Distributed Datasets (RDDs)](http://spark.apache.org/docs/latest/programming-guide.html#resilient-distributed-datasets-rdds)
 ([Scala API](http://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.rdd.RDD))
 ]
+
+???
+
+* イミュータブル
+    * 一旦作ったら、変更できない
+* 一部のノードに障害が起きてデータが一部欠損しても復旧することができる
 
 ---
 
@@ -301,6 +323,13 @@ def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelec
 * `map()` で `String` ⇒ `Ranking` に変換する
 * *Ranking* : hashTag, rank, sampleTweets, sampleCount を属性にもつ
 ]
+
+???
+
+* Ranking
+    * 1つのハッシュタグの順位を表現するケースクラス
+* sampleTweets
+    * ハッシュタグが含まれていたツイートの数
 
 ---
 
@@ -338,6 +367,11 @@ def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelec
   * `map()` による `Ranking` への変換
 ]
 
+???
+
+* 実際に処理が実行されるメソッド ⇒ **アクション**
+    * RDDの要素数を数える`count()`などがある
+
 ---
 
 ## 現在の実装
@@ -370,16 +404,44 @@ def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelec
 
 .float-bottom-30.glass-deep[
 * フロントエンドへ結果を返す
-    * ここでは[Akka](http://akka.io/)のメッセージパッシングを使っている
+    * ここでは[Akka](http://akka.io/)を使って結果を送っている
     * ただの配列になっているので他の方法でもOK
         * REST APIにする・DBに保存 etc...
 ]
+
+???
+
+`Ranking`の配列」を解析結果としてフロントエンドに返す
+
+---
+
+## アプリケーションの起動
+
+```bash
+### Mac OS X###
+cd spark-hands-on-development
+./activator backend/run
+./activator run
+```
+```bash
+### Windows ###
+cd spark-hands-on-development
+activator backend/run
+activator run
+```
+
+▶ ブラウザで http://localhost:9000/ を開く
+
+???
+
+* 同じハッシュタグがいくつも表示されてランキングになっていない
+* 日本語以外の読めない言語が表示されている
 
 ---
 
 ## コンソール上で動きを確認
 
-* 毎回ブラウザで確認するのは手間なので<br>コマンドを用意しておきました
+* 毎回ブラウザで確認するのは手間なので コマンドを用意しておきました
 
 ~~~bash
 ### Mac OS X ###
@@ -393,12 +455,17 @@ activator backend/print
 
 ▶ `Ctrl + C` で終了
 
+???
+
+これからこのプログラムを修正していきます。
+手間なので、コマンドを用意しておきました。
+
 ---
 
 ## 日本語のツイートを抽出 - .small[使うもの]
 
 * `RDD#filter()` を使う
-* `filter()` には `String` を引数にとって `Boolean` を返す関数を渡す
+* `filter()` には 「`String` を引数にとって `Boolean` を返す関数」を渡す
   * .accent[true] になる要素だけの RDD が生成される
 
 .footnote[[Scala API - RDD](http://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.rdd.RDD)]
@@ -457,7 +524,11 @@ activator backend/print
 Ranking("#hashTag", rank = ???, Array(tweet), sampleCount = ???)
 ~~~
 
-最終的に、.accent[ハッシュタグ]とそのハッシュタグを 含んでいる.accent[ツイートの配列]のペアを作らないといけない
+.accent[ハッシュタグ]とそのハッシュタグを含んでいる .accent[ツイートの配列]のペアを作らないといけない
+
+???
+
+Ranking: フロントエンドに結果として返すオブジェクト
 
 ---
 
@@ -482,8 +553,8 @@ Ranking("#hashTag", rank = ???, Array(tweet), sampleCount = ???)
 ~~~
 .indent[▼ .small[`Ranking`に変換]]
 ~~~scala
-Ranking("#hashTag1", rank = ???, ["ツイートA #hashTag1", "ツイートB #hashTag1 #hashTag2"], sampleCount = 2)
-Ranking("#hashTag2", rank = ???, ["ツイートB #hashTag1 #hashTag2"], sampleCount = 1)
+Ranking("#hashTag1", rank = ???, ["ツイートA #hashTag1", "ツイートB #hashTag1 #hashTag2"], sampleCount = ???)
+Ranking("#hashTag2", rank = ???, ["ツイートB #hashTag1 #hashTag2"], sampleCount = ???)
 ~~~
 ]
 
@@ -667,6 +738,10 @@ def analyzeRankingWithStream(sc: SparkContext, ssc: StreamingContext, receiver: 
 }
 ~~~
 
+???
+
+`analyzeRankingWithStream`: `analyzeRanking`の下
+
 --
 
 .float-bottom-60.glass-deep[
@@ -680,7 +755,7 @@ def analyzeRankingWithStream(sc: SparkContext, ssc: StreamingContext, receiver: 
 
 * 離散化ストリーム
 * 連続するRDDの集合
-    * RDDはバッチインターバルの間の入力データを持つ
+    * RDDはバッチインターバルごとの入力データを持つ
     * バッチインターバルは`StreamingContext`に設定
 * RDDと似たAPIを持つ
 
@@ -725,7 +800,7 @@ def analyzeRankingWithStream(sc: SparkContext, ssc: StreamingContext, receiver: 
 
 ---
 
-## ストリームデータの集計
+## バッチインターバル以上の集計
 
 .zero-margin[
 ~~~scala
@@ -733,7 +808,7 @@ def analyzeRankingWithStream(sc: SparkContext, ssc: StreamingContext, receiver: 
 val hashTagGroupsStream: DStream[(String, Iterable[String])] =
   hashTagTweetPairStream.groupByKey()
 ~~~
-* ⇒ 500ミリ秒(バッチインターバル)ごとのツイートが集計される
+* ⇒ バッチインターバル(500ミリ秒)ごとのツイートが集計される
 * 過去何分かの集計を表示したい場合は `DStream#groupByKeyAndWindow`を使って ウィンドウ集計する。↓
 ~~~scala
 // ペアの1番目をキーとしてツイートのグループを作る DStream
@@ -786,6 +861,11 @@ val analyzeLogic: analyzeLogicType = analyzeRankingWithStream
 ~~~
 ]
 
+???
+
+* `analyzeLogic`何行目?
+    * 19行目
+
 ---
 
 
@@ -828,6 +908,10 @@ class: middle, center
 * Task
     * Executor上で実行される処理。
 ]
+
+???
+
+1.
 
 ---
 
@@ -940,7 +1024,7 @@ activator run
 
 * 分散処理が簡単にプログラミングできる
 * ライブラリを組み合わせることで実現できることの 幅が広がる
-* スケールアウトを簡単に実現できる
+* プログラムを書き換えることなくスケールアウト できる
 
 ---
 class: middle, center
@@ -987,13 +1071,114 @@ class: middle, center
 
 # Thank you!
 
+---
+
+## お願い
+
+.center[
+### アンケートにご協力ください
+.qr-code.size-20[http://goo.gl/forms/wF3zZzRw6O]<br>
+[回答する](http://goo.gl/forms/wF3zZzRw6O)
+]
+
 </textarea>
+
 <script>
   var slideshow = remark.create({
           highlightStyle: 'monokai',
           highlightLanguage: 'remark',
           highlightLines: true
         }) ;
+
+  $(function() {
+      // 全てのリンクが別のタブで開くようにする
+      $('a').attr({target: "_blank"}); //_
+
+      // QR-Code support
+      $(".qr-code").each(function() {
+        var $this = $(this);
+        var text = $this.text();
+        $this.text("");
+        $this.qrcode(text);
+      });
+
+
+      // var url = "ws://localhost:9000";
+      var url = "wss://stark-dusk-4378.herokuapp.com";
+
+      var connectAsController = function() {
+
+        $(".subscribe-control").hide();
+
+        var passcode = window.prompt("passcode?", "");
+
+        if (passcode === null) {
+          return;
+        }
+
+        var innerConnect = function() {
+
+          var connection = new WebSocket(url + "/control?passcode=" + passcode);
+
+          // FIXME: 接続が切断されたらエラーログが出る問題
+          connection.onopen = function() {
+            slideshow.on('showSlide', function(slide) {
+              var index = slide.getSlideIndex();
+              connection.send(JSON.stringify({index: index}));
+            });
+          };
+          connection.onmessage = function(e) {
+          };
+          connection.onerror = function(error) {
+            console.log("error: " + error);
+            alert("通信でエラーが発生しました。同期を有効にするにはリロードする必要があります。");
+          };
+          connection.onclose = function() {
+            console.log("closed");
+            setTimeout(function() {
+              innerConnect();
+            }, 1000);
+          };
+        };
+        innerConnect();
+      };
+
+      var connectAsSubscriber = function() {
+
+          var connection = new WebSocket(url + "/subscribe");
+
+          connection.onopen = function() {
+            console.log("connected remote controller");
+            $(".subscribe-control").show();
+          };
+          connection.onmessage = function(e) {
+            var data = JSON.parse(e.data);
+
+            if ($("#enable-sync").prop("checked")) {
+              if (data.index) {
+                slideshow.gotoSlide(data.index + 1);
+              }
+            }
+          };
+          connection.onerror = function(error) {
+            console.log("error: " + error);
+            alert("通信でエラーが発生しました。同期を有効にするにはリロードする必要があります。");
+          };
+          connection.onclose = function() {
+            console.log("closed");
+            setTimeout(function() {
+              connectAsSubscriber();
+            }, 1000);
+          };
+      };
+
+      if (window.location.search && window.location.search == "?control=true") {
+        connectAsController();
+      } else {
+        connectAsSubscriber();
+      }
+  });
+
 </script>
 </body>
 </html>
