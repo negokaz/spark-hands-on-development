@@ -99,11 +99,13 @@ Welcome to
 Type --help for more information.
 ~~~
 
-#### Hadoop 2.6
+#### Hadoop
 
-[Hadoop 2.6.0 Windows 64-bit Binaries](http://www.barik.net/archive/2015/01/19/172716/) から *hadoop-2.6.0.tar.gz* をダウンロードします。
+64bit版のWindowsへインストールする場合は [Hadoop 2.6.0 Windows 64-bit Binaries](http://www.barik.net/archive/2015/01/19/172716/) から *hadoop-2.6.0.tar.gz* をダウンロードします。
 
-tgz ファイルを解凍し、解凍されたディレクトリを任意の場所に配置します。
+32bit版のWindowsへインストールする場合は [Apache Hadoop 2.7.1 Native Windows 32 Bit Binaries](http://prowessteja.blogspot.in/2015/10/apache-hadoop-271-native-windows-32-bit.html) の *Apache Hadoop 2.7.1 Windows 32 bit Binary Package* からtar.gzファイルをダウンロードしてください。
+
+tar.gzファイルを解凍し、解凍されたディレクトリを任意の場所に配置します。
 解凍したディレクトリのパスを環境変数 *HADOOP_HOME* として設定します。
 
 インストール後、下記のコマンドを実行して `%HADOOP_HOME%\bin\winutils.exe` が存在することを確認してください。
