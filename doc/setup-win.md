@@ -13,7 +13,7 @@
 
 ## TwitterのAPIキーを取得
 
-下記のページを参考に、合計4つのAPIキーを取得します。
+https://apps.twitter.com/ から下記のページを参考に、合計4つのAPIキーを取得します。
 
 参考: [Twitter APIの使い方まとめ](https://syncer.jp/twitter-api-matome)
 
