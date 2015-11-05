@@ -20,21 +20,30 @@
     margin-left: 3em;
   }
 
+  .remote-controller label {
+    color: rgba(0, 0, 0, 0.60);
+  }
+  
   @media print {
-    remote-controller {
+    .remote-controller {
       visibility: hidden;
     }
   }
-
 </style>
 
 <body>
-<label for="enable-sync" class="remote-controller subscribe-control">スライドを同期:</label>
-<input type="checkbox" id="enable-sync" class="remote-controller subscribe-control" checked />
+<div class="remote-controller">
+  <label for="enable-sync" class="subscribe-control">スライドを同期:</label>
+  <input type="checkbox" id="enable-sync" class="subscribe-control" checked />
+</div>
 <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js"></script>
 <textarea id="source">
 # 前準備
 
+* スライド: [http://bit.ly/1NvuNie](http://negokaz.github.io/spark-hands-on-development/) .small[(Chrome 推奨)]
+    * PDF: [http://bit.ly/1OrSgCd](apache-spark-hands-on-development.pdf)
+
+.small[
 * 無線LANを接続してください
 * 最新版のソースを取得してください
     ~~~
@@ -45,7 +54,11 @@
     ~~~
 * チャットのアカウントを作ってください → [作成](http://chat.tech-circle-10.mydns.jp/signup)
     * [フィードバックスレ](http://chat.tech-circle-10.mydns.jp/#/board/default/17592186045430) - 質問や気になることなど
-* ハッシュタグは #techcircleja です
+]
+
+???
+
+* Back-channeling を起動しておく
 
 ---
 class: middle, fit-left, background-cover, tc-title
@@ -73,6 +86,7 @@ Twitterハッシュタグのランキングを実況する Webアプリを開発
 ???
 
 * Reactive Platform の検証
+    * Typesafe がメインで作っている Reactive System を実現するためのフレームワークやライブラリ
     * SI でどのようにすれば活用できるか？
 
 ---
@@ -101,8 +115,6 @@ Twitterハッシュタグのランキングを実況する Webアプリを開発
 .left-column[
 .size-100[![](img/spark-stack.png)]
 ]
-
-<div class="highlight" style="width:8.6em;height:4em;top:7.7em;left:5em;"></div>
 
 .right-column[
 * Spark Streaming
@@ -137,30 +149,35 @@ Twitterハッシュタグのランキングを実況する Webアプリを開発
 
 .footnote.small[[Apache Sparkがスループットとレイテンシを両立させた仕組みと 最新動向をSparkコミッタとなったNTTデータ猿田氏に聞いた](http://www.publickey1.jp/blog/15/apache_sparksparkntt.html)]
 
+???
+
+* ロジスティック回帰
+
 ---
 
 ## Sparkの導入事例
 
+* .small[[Spark and Shark Bridges the Gap Between BI and Machine Learning](https://spark-summit.org/2014/talk/spark-and-shark-bridges-the-gap-between-bi-and-machine-learning-at-yahoo-taiwan)]
+    * Yahoo! 台湾法人
+    * Hadoop MapReduce から Spark への移行
+    * 日次レポート作成: 83%↑ 機械学習: 7.5倍↑
 * .small[[Real-Time Recommendations using Spark](https://spark-summit.org/east-2015/talk/real-time-recommendations-using-spark)]
     * 米 Comcast Labs.
     * 好みに合わせた番組のリアルタイムレコメンド
     * MLlib と Spark Streaming を組み合わせ
-* .small[[Data Driven-Toyota Customer 360 Insights on Apache Spark and MLlib](https://spark-summit.org/2015/events/keynote-7/)]
-    * TOYOTA 米国法人
-    * SNS上の顧客の声を分析するのに利用
-    * Sparkを使うことによって36時間が9分に
 
 ???
+
+## Yahoo 台湾法人
+
+* 日次レポート: BI
+* 機械学習: ユーザーへのレコメンドのための学習 
 
 ## Comcast Labs.
 
 * ユーザーの視聴履歴をMLlibでバッチ処理。ユーザーをクラスタリング。
 * Spark Streaming を使ってユーザーのクラスタごとの選局状況を取得し、レコメンド。
 
-## TOYOTA 米国法人
-
-* 普通のバッチ → Spark
-* 同じように Streaming と MLlib を組み合わせ
 
 ---
 
@@ -169,6 +186,9 @@ Twitterハッシュタグのランキングを実況する Webアプリを開発
 * 1台のサーバーではまかないきれないデータを 集計・分析したい
     * クラスタの総メモリサイズに収まるデータ量
 * 将来的にデータ量が増える可能性がある
+* スループットよりもレイテンシを重視したい
+
+.footnote[より詳しく: [Apache Sparkが描く大規模インメモリ処理の世界](http://www.slideshare.net/hadoopxnttdata/apache-spark-1000-nodes-ntt-data)]
 
 ???
 
@@ -185,7 +205,7 @@ class: middle, center
 
 ## これから開発するアプリ
 
-.size-100[![](img/screenshot.png)]
+.size-80[![](img/screenshot.png)]
 
 --
 
@@ -275,7 +295,7 @@ def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelec
 
 * 耐障害性のある分散データセット
 * イミュータブル
-* データはパーティションに分割され、各ノードに分散して配置される
+* データはパーティションに分割され 各ノードに分散して配置される
 * .accent[入力元のRDD]と.accent[処理内容]の情報を持っているため 壊れても復旧可能
 
 .footnote[
@@ -808,7 +828,7 @@ def analyzeRankingWithStream(sc: SparkContext, ssc: StreamingContext, receiver: 
 val hashTagGroupsStream: DStream[(String, Iterable[String])] =
   hashTagTweetPairStream.groupByKey()
 ~~~
-* ⇒ バッチインターバル(500ミリ秒)ごとのツイートが集計される
+* ⇒ バッチインターバル(500ミリ秒) ごとのツイートが集計される
 * 過去何分かの集計を表示したい場合は `DStream#groupByKeyAndWindow`を使って ウィンドウ集計する。↓
 ~~~scala
 // ペアの1番目をキーとしてツイートのグループを作る DStream
@@ -911,7 +931,9 @@ class: middle, center
 
 ???
 
-1.
+http://spark.apache.org/docs/latest/spark-standalone.html#launching-spark-applications
+
+* Driver は ワーカーノードのどれかで起動する
 
 ---
 
@@ -985,7 +1007,7 @@ spark-class org.apache.spark.deploy.worker.Worker spark://192.168.179.3:7077
 # JAR があるディレクトリに移動
 cd spark-hands-on-development/modules/backend/target/scala-2.10/
 # Sparkのクラスタへ submit
-spark-submit --master spark://192.168.179.3:7077 twitter-hashtag-ranking-backend-assembly-1.0.0.jar
+spark-submit --deploy-mode cluster --master spark://192.168.179.3:7077 twitter-hashtag-ranking-backend-assembly-1.0.0.jar
 ```
 
 ---
@@ -1120,7 +1142,6 @@ class: middle, center
 
           var connection = new WebSocket(url + "/control?passcode=" + passcode);
 
-          // FIXME: 接続が切断されたらエラーログが出る問題
           connection.onopen = function() {
             slideshow.on('showSlide', function(slide) {
               var index = slide.getSlideIndex();
@@ -1130,11 +1151,16 @@ class: middle, center
           connection.onmessage = function(e) {
           };
           connection.onerror = function(error) {
-            console.log("error: " + error);
+            console.log(error);
             alert("通信でエラーが発生しました。同期を有効にするにはリロードする必要があります。");
+            // disable retry
+            connection.onclose = function() {
+              console.log("closed");
+            };
           };
           connection.onclose = function() {
             console.log("closed");
+            // retry
             setTimeout(function() {
               innerConnect();
             }, 1000);
@@ -1150,6 +1176,7 @@ class: middle, center
           connection.onopen = function() {
             console.log("connected remote controller");
             $(".subscribe-control").show();
+            connection.send(JSON.stringify({request: "latestCommand"}));
           };
           connection.onmessage = function(e) {
             var data = JSON.parse(e.data);
@@ -1161,11 +1188,16 @@ class: middle, center
             }
           };
           connection.onerror = function(error) {
-            console.log("error: " + error);
+            console.log(error);
             alert("通信でエラーが発生しました。同期を有効にするにはリロードする必要があります。");
+            // disable retry
+            connection.onclose = function() {
+              console.log("closed");
+            };
           };
           connection.onclose = function() {
             console.log("closed");
+            // retry
             setTimeout(function() {
               connectAsSubscriber();
             }, 1000);

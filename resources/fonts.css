@@ -1,24 +1,14 @@
-@font-face {
-  font-family: mplus-1m-thin;
-  src: url('fonts/mplus-1m-thin.ttf') format("truetype");
-}
+/*
+ * sans-serif: ゴシック体系
+ * serif: 明朝体系
+ * cursive: 筆記体系
+ * fantasy: 装飾系
+ * monospace: 等幅系
+*/
 
-@font-face {
-  font-family: mplus-1m-light;
-  src: url('fonts/mplus-1m-light.ttf') format("truetype");
-}
+@import url(http://fonts.googleapis.com/earlyaccess/notosansjapanese.css);
 
 @font-face {
   font-family: mplus-1m-regular;
   src: url('fonts/mplus-1m-regular.ttf') format("truetype");
-}
-
-@font-face {
-  font-family: mplus-1m-medium;
-  src: url('fonts/mplus-1m-medium.ttf') format("truetype");
-}
-
-@font-face {
-  font-family: mplus-1m-bold;
-  src: url('fonts/mplus-1m-bold.ttf') format("truetype");
 }
