@@ -50,6 +50,7 @@ git version 2.2.1
 
 下記のページを参考にしてインストールしてください。
 PATH と JAVA_HOME を設定するところまで実施してください。
+下記ページでは32bit版をインストールしていますが、64bit版のWindowsの場合は Windows x64 のインストーラを利用してください。
 
 参考: [Java(JDK)ダウンロードとインストール](http://www.javadrive.jp/install/)
 
@@ -123,7 +124,7 @@ winutils.exe
 
 ---
 
-#### IntelliJ IDEA 14
+#### IntelliJ IDEA
 
 [公式のダウンロードページ](https://www.jetbrains.com/idea/download/) から無料の Community Edition をダウンロードしてください。
 ![Community Edition を選択](download-idea.png)
@@ -140,7 +141,7 @@ winutils.exe
 ### IntelliJ IDEA に Scala Plugin をインストール
 
 下記ページを参考にして IntelliJ IDEA に Scala Plugin をインストールしてください。
-*ScalaのためのIntelliJ IDEAの初期設定* の章のJDKを設定するところまででOKです。
+SBT Plugin は不要で、*ScalaのためのIntelliJ IDEAの初期設定* の章のJDKを設定するところまででOKです。
 
 参考: [Scala 開発環境構築(IntelliJ IDEA, SBT, scalaenv)](http://blog.chopschips.net/blog/2014/09/07/scala-get-started/)
 
