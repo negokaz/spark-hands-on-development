@@ -314,6 +314,7 @@ def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelec
 
 * イミュータブル
     * 一旦作ったら、変更できない
+    * 別のデータを持つRDDが欲しい場合は、変更したいRDDを元に新しいRDDを作る
 * 一部のノードに障害が起きてデータが一部欠損しても復旧することができる
 
 ---
@@ -355,8 +356,15 @@ def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelec
 
 * Ranking
     * 1つのハッシュタグの順位を表現するケースクラス
-* sampleTweets
-    * ハッシュタグが含まれていたツイートの数
+    * フロントエンドに渡すデータ
+    * hashTag
+        * 1つのハッシュタグ
+    * rank
+        * そのハッシュタグの順位
+    * sampleCount
+        * そのハッシュタグを含むツイートの数
+    * sampleTweets
+        * ハッシュタグが含まれていたツイートの数
 
 ---
 
@@ -395,7 +403,7 @@ def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelec
 ]
 
 ???
-
+* RDDの宣言だけでは実行されないということに注意
 * 実際に処理が実行されるメソッド ⇒ **アクション**
     * RDDの要素数を数える`count()`などがある
 
@@ -461,7 +469,8 @@ activator run
 
 ???
 
-* 同じハッシュタグがいくつも表示されてランキングになっていない
+* 全部 ×1
+* 同じハッシュタグがサマリされておらずランキングになっていない
 * 日本語以外の読めない言語が表示されている
 
 ---
@@ -486,6 +495,7 @@ activator backend/print
 
 これからこのプログラムを修正していきます。
 手間なので、コマンドを用意しておきました。
+IntelliJ上で確認してみてください。
 
 ---
 
@@ -720,6 +730,10 @@ val rankingsRDD: RDD[Ranking] =
 
 .footnote[[Scala API - RDD](http://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.rdd.RDD)]
 
+???
+
+終了: 【0:23:00】
+
 ---
 
 ## 解答
@@ -791,6 +805,11 @@ def analyzeRankingWithStream(sc: SparkContext, ssc: StreamingContext, receiver: 
 * RDDと似たAPIを持つ
 
 .footnote[[Apache Spark - Discretized Streams (DStreams)](http://spark.apache.org/docs/latest/streaming-programming-guide.html#discretized-streams-dstreams)([Scala API](https://spark.apache.org/docs/1.5.1/api/java/org/apache/spark/streaming/dstream/DStream.html))]
+
+???
+
+* バッチインターバル: 500ミリ秒
+
 ---
 
 ## 現在の実装
@@ -849,6 +868,10 @@ val hashTagGroupsStream: DStream[(String, Iterable[String])] =
 ~~~
 ]
 
+???
+
+静的なファイルの解析のときを思い出して、集計処理は groupByKey 使いましたよね？
+
 ---
 
 ## ウィンドウ集計
@@ -875,6 +898,10 @@ val hashTagGroupsStream: DStream[(String, Iterable[String])] =
 * 集計したものを`DStream#foreachRDD`の中で
     * ソートしインデックスを付与
     * `Ranking`に変換
+
+???
+
+終了: 0:42:00
 
 ---
 
@@ -947,6 +974,11 @@ class: middle, center
 ???
 
 http://spark.apache.org/docs/latest/spark-standalone.html#launching-spark-applications
+
+1. Driver Program から filter, map などのタスクが Worker Node の Executor に送られます
+1. Worker上の Executor プロセスで Task が実行されて
+1. 結果が Spark Context に返されます
+1. Cluster Manager が処理のジョブスケジューリングを行います
 
 * Driver は ワーカーノードのどれかで起動する
 
@@ -1071,6 +1103,8 @@ class: middle, center
 
 #【0:55:00】
 
+* 日本語の書籍紹介
+
 ---
 
 ## 書籍: 初めてのSpark
@@ -1079,9 +1113,6 @@ class: middle, center
 .footnote[https://www.oreilly.co.jp/books/9784873117348/]
 
 ???
-
-* いいよ
-* 基本からチューニングの話まで盛りだくさん
 
 ---
 
