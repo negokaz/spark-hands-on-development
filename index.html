@@ -37,6 +37,8 @@
   <input type="checkbox" id="enable-sync" class="subscribe-control" checked />
 </div>
 <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js"></script>
+<script src="resources/reconnecting-websocket.min.js"></script>
+<script src="resources/remark-remote.js"></script>
 <textarea id="source">
 # 前準備
 
@@ -1174,90 +1176,34 @@ class: middle, center
         $this.qrcode(text);
       });
 
-
-      // var url = "ws://localhost:9000";
-      var url = "wss://stark-dusk-4378.herokuapp.com";
-
-      var connectAsController = function() {
-
-        $(".subscribe-control").hide();
-
-        var passcode = window.prompt("passcode?", "");
-
-        if (passcode === null) {
-          return;
-        }
-
-        var innerConnect = function() {
-
-          var connection = new WebSocket(url + "/control?passcode=" + passcode);
-
-          connection.onopen = function() {
-            slideshow.on('showSlide', function(slide) {
-              var index = slide.getSlideIndex();
-              connection.send(JSON.stringify({index: index}));
-            });
-          };
-          connection.onmessage = function(e) {
-          };
-          connection.onerror = function(error) {
-            console.log(error);
-            alert("通信でエラーが発生しました。同期を有効にするにはリロードする必要があります。");
-            // disable retry
-            connection.onclose = function() {
-              console.log("closed");
-            };
-          };
-          connection.onclose = function() {
-            console.log("closed");
-            // retry
-            setTimeout(function() {
-              innerConnect();
-            }, 1000);
-          };
-        };
-        innerConnect();
-      };
-
-      var connectAsSubscriber = function() {
-
-          var connection = new WebSocket(url + "/subscribe");
-
-          connection.onopen = function() {
-            console.log("connected remote controller");
-            $(".subscribe-control").show();
-            connection.send(JSON.stringify({request: "latestCommand"}));
-          };
-          connection.onmessage = function(e) {
-            var data = JSON.parse(e.data);
-
-            if ($("#enable-sync").prop("checked")) {
-              if (data.index) {
-                slideshow.gotoSlide(data.index + 1);
-              }
-            }
-          };
-          connection.onerror = function(error) {
-            console.log(error);
-            alert("通信でエラーが発生しました。同期を有効にするにはリロードする必要があります。");
-            // disable retry
-            connection.onclose = function() {
-              console.log("closed");
-            };
-          };
-          connection.onclose = function() {
-            console.log("closed");
-            // retry
-            setTimeout(function() {
-              connectAsSubscriber();
-            }, 1000);
-          };
+      var remote = remark.remote(slideshow, "ws://localhost:9000/");
+      // var remote = remark.remote(slideshow, "wss://stark-dusk-4378.herokuapp.com/");
+      console.log(remote);
+      remote.ondisconnect = function() {
+        alert("通信が切れました。同期を有効にするにはリロードする必要があります。");
       };
 
       if (window.location.search && window.location.search == "?control=true") {
-        connectAsController();
+        $(".subscribe-control").hide();
+        var passcode = window.prompt("passcode?", "");
+        if (passcode === null) {
+          return;
+        }
+        remote.control(passcode);
       } else {
-        connectAsSubscriber();
+        var following = remote.follow();
+        var $enableSync = $("#enable-sync");
+        following.followWhen = function() {
+          return $enableSync.prop("checked");
+        };
+        $enableSync.click(function() {
+          if ($enableSync.prop("checked")) {
+            following.sync();
+          }
+        });
+        following.ondefiance = function() {
+          $enableSync.prop("checked", false);
+        }
       }
   });
 
