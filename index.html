@@ -1191,8 +1191,8 @@ class: middle, center
         $this.qrcode(text);
       });
 
-      var remote = remark.remote(slideshow, "ws://localhost:9000/");
-      // var remote = remark.remote(slideshow, "wss://stark-dusk-4378.herokuapp.com/");
+      // var remote = remark.remote(slideshow, "ws://localhost:9000/");
+      var remote = remark.remote(slideshow, "wss://stark-dusk-4378.herokuapp.com/");
       console.log(remote);
       remote.ondisconnect = function() {
         alert("通信が切れました。同期を有効にするにはリロードする必要があります。");
