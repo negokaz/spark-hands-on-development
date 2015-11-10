@@ -76,6 +76,13 @@ function Follower(slideshow, url, options) {
       // 必ず gotoSlide の前に値を入れておく
       latestFollowIndex = data.follow_slide.index;
       slideshow.gotoSlide(data.follow_slide.index + 1);
+    } else if (data.questionnaire) {
+      self.connection.send({
+        "questionnaire_answer": {
+          "category": data.questionnaire.category,
+          "answer": self.questionnaireAnswer(data.questionnaire.category)
+        }
+      });
     }
   };
 
@@ -93,11 +100,28 @@ function Follower(slideshow, url, options) {
 }
 Follower.prototype.ondefiance = function() {};
 Follower.prototype.followWhen = function() { return true };
+Follower.prototype.questionnaireAnswer = function(category) { return false };
 
 function Controller(slideshow, url, passcode, options) {
   var self = this;
 
   self.connection = new Connection(url + "control?passcode=" + passcode, options);
+
+  self.connection.onreceive = function(data) {
+    if (data.survey_started) {
+      self.onstartsurvey(data.survey_started.category);
+    } else if (data.survey_result) {
+      self.onsurveyresult(data.survey_result.category, data.survey_result.answer);
+    }
+  };
+
+  self.survey = function(category) {
+    self.connection.send({
+      "survey": {
+        "category": category
+      }
+    });
+  };
 
   slideshow.on('showSlide', function(slide) {
     self.connection.send({
@@ -108,6 +132,8 @@ function Controller(slideshow, url, passcode, options) {
   });
 
 }
+Controller.prototype.onstartsurvey = function(category) {};
+Controller.prototype.onsurveyresult = function(category, answer) {};
 
 function Connection(url, options) {
   var self = this;

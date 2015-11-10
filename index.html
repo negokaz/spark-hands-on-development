@@ -24,6 +24,19 @@
     color: rgba(0, 0, 0, 0.60);
   }
 
+  .questionnaire {
+    position: absolute;
+    right: 1em;
+    font-size: 0.5em;
+    color: rgba(0, 0, 0, 0.60);
+    padding: 0.5em;
+    box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.4);
+  }
+
+  .questionnaire input {
+    margin: 0 0.5em;
+  }
+
   @media print {
     .remote-controller {
       visibility: hidden;
@@ -40,6 +53,8 @@
 <script src="resources/reconnecting-websocket.min.js"></script>
 <script src="resources/remark-remote.js"></script>
 <textarea id="source">
+.questionnaire.prepare[準備OK]
+
 # 前準備
 
 * スライド: [http://bit.ly/1NvuNie](http://negokaz.github.io/spark-hands-on-development/) .small[(Chrome 推奨)]
@@ -1176,21 +1191,59 @@ class: middle, center
         $this.qrcode(text);
       });
 
-      // var remote = remark.remote(slideshow, "ws://localhost:9000/");
-      var remote = remark.remote(slideshow, "wss://stark-dusk-4378.herokuapp.com/");
+      var remote = remark.remote(slideshow, "ws://localhost:9000/");
+      // var remote = remark.remote(slideshow, "wss://stark-dusk-4378.herokuapp.com/");
       console.log(remote);
       remote.ondisconnect = function() {
         alert("通信が切れました。同期を有効にするにはリロードする必要があります。");
       };
 
       if (window.location.search && window.location.search == "?control=true") {
+        // Controllers
         $(".subscribe-control").hide();
         var passcode = window.prompt("passcode?", "");
         if (passcode === null) {
           return;
         }
-        remote.control(passcode);
+        var controlling = remote.control(passcode);
+
+        $(".questionnaire").each(function() {
+          var $this = $(this);
+          var category = $this.attr("class").replace(/\s/g, "_");
+          var label = $this.text();
+          $this.attr("id", category);
+          $this.text("");
+          var $count = $("<span class='count'>0</span>");
+          var $population = $("<span class='population'>0</span>");
+          var $start = $("<input type='button' value='" + label + "?' />")
+          $this.append($start);
+          $this.append($count);
+          $this.append("<span>/</span>");
+          $this.append($population);
+          $start.on("click", function() {
+            controlling.survey(category);
+          });
+        });
+
+        controlling.onstartsurvey = function(category) {
+          var $result = $(".questionnaire" + "#" + category);
+          $result.find(".count").text(0);
+          $result.find(".population").text(0);
+        };
+
+        controlling.onsurveyresult = function(category, answer) {
+          var $result = $(".questionnaire" + "#" + category);
+          var $count = $result.find(".count");
+          var $population = $result.find(".population");
+
+          if (answer == "true") {
+            $count.text(parseInt($count.text()) + 1);
+          }
+          $population.text(parseInt($population.text()) + 1);
+        };
+
       } else {
+        // Follower
         var following = remote.follow();
         var $enableSync = $("#enable-sync");
         following.followWhen = function() {
@@ -1203,7 +1256,21 @@ class: middle, center
         });
         following.ondefiance = function() {
           $enableSync.prop("checked", false);
-        }
+        };
+
+        following.questionnaireAnswer = function(category) {
+          return $("input#" + category).prop("checked").toString();
+        };
+
+        $(".questionnaire").each(function() {
+          var $this = $(this);
+          var category = $this.attr("class").replace(/\s/g, "_");
+          var $input = $("<input type='checkbox' id='" + category + "' />");
+          var label = $this.text();
+          $this.text("");
+          $this.append($input);
+          $this.append("<label for=" + category + ">" + label + "</label>");
+        });
       }
   });
 
