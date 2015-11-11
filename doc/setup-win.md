@@ -185,11 +185,25 @@ twitter-hashtag-ranking {
 
 IntelliJ IDEA のターミナルから下記のコマンドを実行してバックエンドサーバーを起動します。
 
-`activator backend/run`
+`./activator backend/run`
 
-同じように下記のコマンドを実行してフロントエンドサーバーを起動します。
+(下記のログが表示されると起動完了です)
+~~~
+[INFO] [11/11/2015 00:00:00.000] [backend-akka.actor.default-dispatcher-2] [akka.tcp://backend@127.0.0.1:2552/user/rankingAnalyzer] === RankingAnalyzer started ===
+~~~
 
-`activator run`
+新しいターミナルを起動し、下記のコマンドを実行してフロントエンドサーバーを起動します。
+
+`./activator run`
+
+(下記のログが表示されると起動完了です)
+~~~
+--- (Running the application, auto-reloading is enabled) ---
+
+[info] p.c.s.NettyServer - Listening for HTTP on /0:0:0:0:0:0:0:0:9000
+
+(Server started, use Ctrl+D to stop and go back to the console...)
+~~~
 
 ----
 
