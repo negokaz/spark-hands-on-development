@@ -213,9 +213,9 @@ IntelliJ IDEA のターミナルから下記のコマンドを実行してバッ
 
 ---
 
-ブラウザで `http://localhost:9000` にアクセスして下のような画面が表示されることを確認してください。
+ブラウザで http://localhost:9000 にアクセスして下のような画面が表示されることを確認してください。
 
-![画面](screenshot.png)
+![画面](screenshot-step1.png)
 
 ## Scalaの基本を理解
 
