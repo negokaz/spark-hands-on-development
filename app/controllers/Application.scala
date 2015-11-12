@@ -11,7 +11,7 @@ import play.api.Play.current
 
 class Application @Inject()(actorSystem: ActorSystem) extends Controller {
 
-  def index = Action {
+  def index = Action { implicit request =>
 
     Ok(views.html.main())
   }

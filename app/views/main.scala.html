@@ -1,3 +1,4 @@
+@()(implicit request: play.api.mvc.RequestHeader)
 <!DOCTYPE html>
 
 <html lang="ja">
@@ -12,6 +13,6 @@
         <link rel="import" href='@routes.Assets.versioned("components/ranking-view.html")'>
     </head>
     <body class="fullbleed">
-        <ranking-view url="ws://localhost:9000/socket"></ranking-view>
+        <ranking-view url="@routes.Application.socket().webSocketURL()"></ranking-view>
     </body>
 </html>
