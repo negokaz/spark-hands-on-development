@@ -24,16 +24,32 @@
     color: rgba(0, 0, 0, 0.60);
   }
 
-  .questionnaire {
+  .todo {
     position: absolute;
     right: 1em;
-    font-size: 0.5em;
+    font-size: 0.4em;
     color: rgba(0, 0, 0, 0.60);
-    padding: 0.5em;
-    box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.4);
+    padding: 0 0.5em;
+    box-shadow: 0.75px 0.75px 0.75px 0.75px rgba(0,0,0,0.2);
   }
 
-  .questionnaire input {
+  .todo ul::before, .todo ol::before {
+    content: "TODO";
+    color: rgba(0, 0, 0, 0.40);
+    font-weight: bold;
+    margin-bottom: 0.5em;
+  }
+
+  .todo ul, ol {
+    margin: 0.8em 0;
+  }
+
+  .todo ul {
+    list-style: none;
+    padding: 0 0.1em;
+  }
+
+  .todo input {
     margin: 0 0.5em;
   }
 
@@ -53,17 +69,19 @@
 <script src="resources/reconnecting-websocket.min.js"></script>
 <script src="resources/remark-remote.js"></script>
 <textarea id="source">
-.questionnaire.prepare[準備OK]
+.todo.prepare[
+* 前準備を全て実施
+]
 
 # 前準備
 
-* スライド: [http://bit.ly/1NvuNie](http://negokaz.github.io/spark-hands-on-development/) .small[(Chrome 推奨)]
-    * PDF: [http://bit.ly/1OrSgCd](apache-spark-hands-on-development.pdf)
+* 無線LANに接続
+* スライドを開く: [http://bit.ly/1NvuNie](http://negokaz.github.io/spark-hands-on-development/) .small[(Chrome 推奨)]
+    * IEしか無い場合 → PDF: [http://bit.ly/1OrSgCd](apache-spark-hands-on-development.pdf)
 
 .small[
 ------
 
-* 無線LANを接続してください
 * 最新版のソースを取得してください
     ~~~
     # spark-hands-on-development ディレクトリ直下で実行してください
@@ -118,7 +136,7 @@ Twitterハッシュタグのランキングを実況する Webアプリを開発
 * ビックデータのための並列分散処理基盤
 * 大量にあるデータの集計や分析ができる
 * オープンソースで開発されている
-* 最新のバージョンは 1.5.1 .small[(2015/11 現在)]
+* 最新のバージョンは 1.5.2 .small[(2015/11 現在)]
 
 .footnote[http://spark.apache.org/]
 
@@ -1207,32 +1225,37 @@ class: middle, center
         }
         var controlling = remote.control(passcode);
 
-        $(".questionnaire").each(function() {
+        $(".todo").each(function() {
           var $this = $(this);
           var category = $this.attr("class").replace(/\s/g, "_");
-          var label = $this.text();
-          $this.attr("id", category);
-          $this.text("");
-          var $count = $("<span class='count'>0</span>");
-          var $population = $("<span class='population'>0</span>");
-          var $start = $("<input type='button' value='" + label + "?' />")
-          $this.append($start);
-          $this.append($count);
-          $this.append("<span>/</span>");
-          $this.append($population);
-          $start.on("click", function() {
-            controlling.survey(category);
+          $this.find("li").each(function(index) {
+            var $li = $(this);
+            var id = category + "_" + index;
+            var label = $li.text();
+            $li.text("");
+            $li.attr("id", id);
+            var $count = $("<span class='count'>0</span>");
+            var $population = $("<span class='population'>0</span>");
+            var $start = $("<input type='button' value='?' />")
+            $li.append($start);
+            $li.append($count);
+            $li.append("<span>/</span>");
+            $li.append($population);
+            $li.append("<span>: " + label + "</span>");
+            $start.on("click", function() {
+              controlling.survey(id);
+            });
           });
         });
 
         controlling.onstartsurvey = function(category) {
-          var $result = $(".questionnaire" + "#" + category);
+          var $result = $(".todo #" + category);
           $result.find(".count").text(0);
           $result.find(".population").text(0);
         };
 
         controlling.onsurveyresult = function(category, answer) {
-          var $result = $(".questionnaire" + "#" + category);
+          var $result = $(".todo #" + category);
           var $count = $result.find(".count");
           var $population = $result.find(".population");
 
@@ -1262,14 +1285,18 @@ class: middle, center
           return $("input#" + category).prop("checked").toString();
         };
 
-        $(".questionnaire").each(function() {
+        $(".todo").each(function() {
           var $this = $(this);
           var category = $this.attr("class").replace(/\s/g, "_");
-          var $input = $("<input type='checkbox' id='" + category + "' />");
-          var label = $this.text();
-          $this.text("");
-          $this.append($input);
-          $this.append("<label for=" + category + ">" + label + "</label>");
+          $this.find("li").each(function(index) {
+            var $li = $(this);
+            var id = category + "_" + index;
+            var $input = $("<input type='checkbox' id='" + id + "' />");
+            var label = $li.text();
+            $li.text("");
+            $li.append($input);
+            $li.append("<label for=" + id + ">" + label + "</label>");
+          });
         });
       }
   });
