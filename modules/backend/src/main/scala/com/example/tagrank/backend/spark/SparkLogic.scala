@@ -111,7 +111,7 @@ object SparkLogic {
       } yield (hashTag, tweet)
 
     // 3.ハッシュタグでグループ分け
-    // 過去2分間のツイートを1秒ごとに集計 ⇒ window: 1分 と slide: 1秒 を指定
+    // 過去1分間のツイートを1秒ごとに集計 ⇒ window: 1分 と slide: 1秒 を指定
     val hashTagGroupsStream: DStream[(String, Iterable[String])] =
       hashTagTweetPairStream.groupByKeyAndWindow(Minutes(1), Seconds(1))
 
