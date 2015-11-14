@@ -39,6 +39,16 @@ object SparkLogic {
     // tweets.txt の中にある全ツイートの RDD
     val tweetsRDD: RDD[String] = sc.textFile(tweetsFilePath)
 
+    // 1.日本語のツイートを抽出
+
+    // 2.ハッシュタグを抽出
+
+    // 3.ハッシュタグでグループ分け
+
+    // 4.ツイートの多い順にソート
+
+    // 5.ランクを設定
+
     // Ranking に変換する RDD
     val rankingsRDD: RDD[Ranking] =
       tweetsRDD map { tweet: String =>
@@ -75,8 +85,18 @@ object SparkLogic {
         status.getText
       }
 
+    // 1.日本語のツイートを抽出
+
+    // 2.ハッシュタグを抽出
+
+    // 3.ハッシュタグでグループ分け
+
     // ストリームの塊を処理する
     tweetStream.foreachRDD { rdd: RDD[String] =>
+
+        // 4.ツイートの多い順にソート
+
+        // 5.ランクを設定
 
         // Ranking に変換する RDD
         val rankingsRDD = rdd map { tweet: String =>
