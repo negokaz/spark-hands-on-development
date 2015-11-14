@@ -30,7 +30,7 @@
     font-size: 0.4em;
     color: rgba(0, 0, 0, 0.60);
     padding: 0 0.5em;
-    box-shadow: 0.75px 0.75px 0.75px 0.75px rgba(0,0,0,0.2);
+    border: 1px solid rgba(0,0,0,0.2);
   }
 
   .todo ul::before, .todo ol::before {
@@ -69,7 +69,7 @@
 <script src="resources/reconnecting-websocket.min.js"></script>
 <script src="resources/remark-remote.js"></script>
 <textarea id="source">
-.todo.prepare[
+.todo[
 * 前準備を全て実施
 ]
 
@@ -249,15 +249,15 @@ class: middle, center
 
 .size-80[![](img/screenshot.png)]
 
---
-
-.float-top-0.glass-deep[
-ハッシュタグのランキングを実況するWebアプリ
+---
+* ハッシュタグのランキングを実況するWebアプリ
 * たくさんTweetされた順にハッシュタグを表示
     * 順位、Tweet数 が確認できる
 * ハッシュタグをクリックするとTweetが見れる
-.right.small[[Twitter - そもそも＃ハッシュタグって何？](https://support.twitter.com/articles/20170159-#whatis)]
-]
+.size-90[![](img/screenshot-zoom.png)]
+
+.footnote[[Twitter - そもそも＃ハッシュタグって何？](https://support.twitter.com/articles/20170159-#whatis)]
+
 ---
 
 ## 構成
@@ -277,14 +277,18 @@ Sparkの基本的なところを知るためにまずは、静的なデータの
 
 ---
 
+.todo[
+* SparkLogic.scalaを開く
+]
+
 ## 準備
 
 1. IntelliJ IDEA を起動
 1. .accent[SparkLogic.scala] を開く
 
 .small[
-* modules > backend > src > main > scala > com.example.tagrank.backend > spark
 * Shift × 2 で SparkLogic.scala を入力すると簡単に検索できます
+* modules > backend > src > main > scala > com.example.tagrank.backend > spark
 ]
 
 ???
@@ -485,23 +489,37 @@ def analyzeRanking(sc: SparkContext, ssc: StreamingContext, receiver: ActorSelec
 
 ---
 
+.todo[
+* "#hashTag"がたくさん表示されているのを確認
+* backendを`Ctrl+C`で終了
+]
+
 ## アプリケーションの起動
 
 ```bash
-### Mac OS X###
 cd spark-hands-on-development
 ./activator backend/run
-./activator run
+# ↓のログが出力されると起動完了
+[INFO] [11/11/2015 00:00:00.000] [backend-akka.actor ... === RankingAnalyzer started ===
 ```
+.zero-margin[
 ```bash
-### Windows ###
+# もう一つコンソールを開いて↓を実行
 cd spark-hands-on-development
-activator backend/run
-activator run
+./activator run
+# ↓のログが出力されると起動完了
+--- (Running the application, auto-reloading is enabled) ---
+
+[info] p.c.s.NettyServer - Listening for HTTP on /0:0:0:0:0:0:0:0:9000
+
+(Server started, use Ctrl+D to stop and go back to the console...)
 ```
+]
+.small[▶ ブラウザで http://localhost:9000/ を開く]
 
-▶ ブラウザで http://localhost:9000/ を開く
-
+.footnote[
+※ Windowsの場合、`activator`の前の`./`は不要です
+]
 ???
 
 * 全部 ×1
@@ -510,21 +528,26 @@ activator run
 
 ---
 
+.todo[
+* backend/printを実行
+]
+
 ## コンソール上で動きを確認
 
 * 毎回ブラウザで確認するのは手間なので コマンドを用意しておきました
 
 ~~~bash
-### Mac OS X ###
 ./activator backend/print
 ~~~
-
-~~~bash
-### Windows ###
-activator backend/print
+~~~
+Ranking(#hashTag, rank: 1, [RT @Mansel~], sampleCount: 1)
+Ranking(#hashTag, rank: 1, [RT @mained~], sampleCount: 1)
+Ranking(#hashTag, rank: 1, [Can you re~], sampleCount: 1)
+Ranking(#hashTag, rank: 1, [初手から首都高とはキ~], sampleCount: 1)
+Ranking(#hashTag, rank: 1, [RT @ganppp~], sampleCount: 1)
 ~~~
 
-▶ `Ctrl + C` で終了
+.small[▶ `Ctrl + C` で終了]
 
 ???
 
@@ -534,7 +557,17 @@ IntelliJ上で確認してみてください。
 
 ---
 
-## 日本語のツイートを抽出 - .small[使うもの]
+## 実施する修正
+
+1. 日本語のツイートを抽出
+2. ハッシュタグを抽出
+3. ハッシュタグでグループ分け
+4. ツイートの多い順にソート
+5. ランクを設定
+
+---
+
+### 1.日本語のツイートを抽出 - .small[使うもの]
 
 * `RDD#filter()` を使う
 * `filter()` には 「`String` を引数にとって `Boolean` を返す関数」を渡す
@@ -548,13 +581,13 @@ IntelliJ上で確認してみてください。
 
 ---
 
-## 日本語のツイートを抽出 - .small[実装]
+### 1.日本語のツイートを抽出 - .small[実装]
 
 ~~~scala
   // tweets.txt の中にある全ツイートの RDD
   val tweetsRDD: RDD[String] = sc.textFile(tweetsFilePath)
 
-  // 日本語を含むツイートを抽出する RDD
+  // 1.日本語のツイートを抽出
 * val japaneseTweetsRDD: RDD[String] =
 *   tweetsRDD.filter(containsJapaneseChar)
 
@@ -569,13 +602,17 @@ IntelliJ上で確認してみてください。
 
 ---
 
-## 日本語のツイートを抽出 - .small[実装]
+.todo[
+* 実装後、`./activator backend/print` で確認
+]
+
+### 1.日本語のツイートを抽出 - .small[実装]
 
 ~~~scala
   // tweets.txt の中にある全ツイートの RDD
   val tweetsRDD: RDD[String] = sc.textFile(tweetsFilePath)
 
-  // 日本語を含むツイートを抽出する RDD
+  // 1.日本語のツイートを抽出
   val japaneseTweetsRDD: RDD[String] =
     tweetsRDD.filter(containsJapaneseChar)
 
@@ -590,7 +627,7 @@ IntelliJ上で確認してみてください。
 
 ---
 
-## ハッシュタグを抽出 - .small[設計]
+### 2.ハッシュタグを抽出 - .small[設計]
 
 ~~~scala
 Ranking("#hashTag", rank = ???, Array(tweet), sampleCount = ???)
@@ -604,7 +641,7 @@ Ranking: フロントエンドに結果として返すオブジェクト
 
 ---
 
-## ハッシュタグを抽出 - .small[設計]
+### 2.ハッシュタグを抽出 - .small[設計]
 
 .zero-margin[
 ~~~scala
@@ -632,7 +669,7 @@ Ranking("#hashTag2", rank = ???, ["ツイートB #hashTag1 #hashTag2"], sampleCo
 
 ---
 
-## ハッシュタグを抽出 - .small[使うもの]
+### 2.ハッシュタグを抽出 - .small[使うもの]
 .zero-margin[
 ~~~scala
 // japaneseTweetsRDD: RDD[String]
@@ -656,17 +693,21 @@ Ranking("#hashTag2", rank = ???, ["ツイートB #hashTag1 #hashTag2"], sampleCo
 
 ---
 
-## ハッシュタグを抽出 - .small[実装]
+.todo[
+* 実装後、`./activator backend/print` で確認
+]
+
+### 2.ハッシュタグを抽出 - .small[実装]
 
 ~~~scala
-// flatMap, map を使った場合
+// 2.ハッシュタグを抽出 (flatMap, map を使った場合)
 val hashTagTweetPairRDD: RDD[(String, String)] =
   japaneseTweetsRDD flatMap { tweet =>
     pickHashTags(tweet) map { hashTag =>
       (hashTag, tweet)
     }
   }
-// for式を使った場合
+// 2.ハッシュタグを抽出 (for式を使った場合)
 val hashTagTweetPairRDD: RDD[(String, String)] =
   for {
     tweet   <- japaneseTweetsRDD
@@ -683,7 +724,7 @@ val rankingsRDD: RDD[Ranking] =
 
 ---
 
-## ハッシュタグでグループ分け - .small[使うもの]
+### 3.ハッシュタグでグループ分け - .small[使うもの]
 
 .zero-margin[
 ~~~scala
@@ -704,9 +745,14 @@ val rankingsRDD: RDD[Ranking] =
 
 ---
 
-## ハッシュタグでグループ分け - .small[実装]
+.todo[
+* 実装後、`./activator backend/print` で確認
+]
+
+### 3.ハッシュタグでグループ分け - .small[実装]
 
 ~~~scala
+// 3.ハッシュタグでグループ分け
 val hashTagGroupsRDD: RDD[(String, Iterable[String])] =
   hashTagTweetPairRDD.groupByKey()
 ~~~
@@ -721,13 +767,17 @@ val rankingsRDD: RDD[Ranking] =
 
 ---
 
-## ツイートの多い順にソート
+.todo[
+* 実装後、`./activator backend/print` で確認
+]
+
+### 4.ツイートの多い順にソート
 
 * `RDD#sortBy()` を使う
 * `tweets.size` の降順にしておく
 
 ~~~scala
-// ツイートの数でソートする RDD
+// 4.ツイートの多い順にソート
 val sortedHashTagGroupsRDD: RDD[(String, Iterable[String])] =
   hashTagGroupsRDD.sortBy({ case (_, tweets) =>
     tweets.size
@@ -745,13 +795,17 @@ val rankingsRDD: RDD[Ranking] =
 
 ---
 
-## ランクを設定
+.todo[
+* 実装後、`./activator backend/print` で確認
+]
+
+### 5.ランクを設定
 
 * `RDD#zipWithIndex()`
 * index は 0 始まりなので + 1 しておく
 
 ~~~scala
-// ソートされた各要素にインデックスを付ける RDD
+// 5.ランクを設定
 val rankedHashTagGroupsRDD: RDD[((String, Iterable[String]), Long)] =
   sortedHashTagGroupsRDD.zipWithIndex()
 ~~~
@@ -777,7 +831,8 @@ val rankingsRDD: RDD[Ranking] =
 
 ~~~bash
 # spark-hands-on-development ディレクトリの直下で実行してください
-git commit -am "「Sparkでプログラミング ①」の途中まで実装"
+git add modules/backend/src/main/scala/com/example/tagrank/backend/spark/SparkLogic.scala
+git commit -m "「Sparkでプログラミング ①」の途中まで実装"
 git checkout step2
 ~~~
 .small[※ 途中の作業は `step1` ブランチに保存されます]
@@ -889,14 +944,14 @@ def analyzeRankingWithStream(sc: SparkContext, ssc: StreamingContext, receiver: 
 
 .zero-margin[
 ~~~scala
-// ペアの1番目をキーとしてツイートのグループを作る DStream
+// 3.ハッシュタグでグループ分け
 val hashTagGroupsStream: DStream[(String, Iterable[String])] =
   hashTagTweetPairStream.groupByKey()
 ~~~
 * ⇒ バッチインターバル(500ミリ秒) ごとのツイートが集計される
 * 過去何分かの集計を表示したい場合は `DStream#groupByKeyAndWindow`を使って ウィンドウ集計する。↓
 ~~~scala
-// ペアの1番目をキーとしてツイートのグループを作る DStream
+// 3.ハッシュタグでグループ分け
 val hashTagGroupsStream: DStream[(String, Iterable[String])] =
   hashTagTweetPairStream
       .groupByKeyAndWindow(windowDuration = Minutes(1), slideDuration = Seconds(1))
@@ -911,7 +966,7 @@ val hashTagGroupsStream: DStream[(String, Iterable[String])] =
 
 ## ウィンドウ集計
 
-.size-80[![](img/streaming-window.svg)]
+.size-90[![](img/streaming-window.svg)]
 
 ???
 
@@ -925,20 +980,24 @@ val hashTagGroupsStream: DStream[(String, Iterable[String])] =
 
 
 ---
+
 ## 実装してみよう
 
-* `DStream#filter`で日本語のツイートを抽出
-* `for` or `DStream#map`, `DStream#flatMap` でハッシュタグ・ツイートのペアを作成
-* `DStream#groupByKeyAndWindow`で 過去1分間の集計を1秒ごとに行う
-* 集計したものを`DStream#foreachRDD`の中で
-    * ソートしインデックスを付与
-    * `Ranking`に変換
+1. `DStream#filter`で日本語のツイートを抽出
+2. `for` もしくは `DStream#map`と`DStream#flatMap` でハッシュタグ・ツイートのペアを作成
+3. `DStream#groupByKeyAndWindow`で 過去1分間の集計を1秒ごとに行う.small[(以降の処理は`DStream#foreachRDD`の中に実装)]
+4. `RDD#sortBy()`でツイートの多い順にソート
+5. `RDD#zipWithIndex()`でランクを設定
 
 ???
 
 終了: 0:42:00
 
 ---
+
+.todo[
+* 実装後、`./activator backend/print` で確認
+]
 
 ## 実装してみよう
 
@@ -968,7 +1027,8 @@ val analyzeLogic: analyzeLogicType = analyzeRankingWithStream
 
 ~~~bash
 # spark-hands-on-development ディレクトリの直下で実行してください
-git commit -am "「Sparkでプログラミング ②」の途中まで実装"
+git add modules/backend/src/main/scala/com/example/tagrank/backend/spark/SparkLogic.scala
+git commit -m "「Sparkでプログラミング ②」の途中まで実装"
 git checkout step3
 ~~~
 .small[※ 途中の作業は `step2` ブランチに保存されます]
@@ -1029,39 +1089,45 @@ http://spark.apache.org/docs/latest/spark-standalone.html#launching-spark-applic
 
 ---
 
+.todo[
+* ビルド後、JARファイルを確認
+]
+
 ## バックエンドのJARを作成
 
 ```bash
-### Mac OS X ###
 cd spark-hands-on-development
 # JAR を作成
 ./activator backend/assembly
-# JAR が作成できていることを確認
-ls modules/backend/target/scala-2.10/
-```
 
-```bash
-### Windows ###
-cd spark-hands-on-development
-# JAR を作成
-activator backend/assembly
-# JAR が作成できていることを確認
-dir modules\backend\target\scala-2.10\
+# 下記のログが出力されるとビルド完了
+[info] Packaging /Users/kazuki/workspace/spark-hands-on-development/modules/backend/target/scala-2.10/twitter-hashtag-ranking-backend-assembly-1.0.0.jar ...
+[info] Done packaging.
+[success] Total time: 54 s, completed 2015/11/14 14:29:37
+
+# modules/backend/target/scala-2.10/ に JAR が作成できていることを確認
 ```
 .small[▶ twitter-hashtag-ranking-backend-assembly-1.0.0.jar]
 
 ---
 
+.todo[
+* Masterを起動
+]
+
 ## クラスタの起動 - Master
 
 ```bash
-spark-class org.apache.spark.deploy.master.Master
-```
+spark-class org.apache.spark.deploy.master.Master --ip 127.0.0.1
 
-```bash
-...
-* 15/10/13 12:44:34 INFO Master: Starting Spark master at spark://192.168.179.3:7077
-...
+# 下記のログが出力されると起動完了
+*15/10/10 00:00:00 INFO Master: Starting Spark master at spark://127.0.0.1:7077
+15/10/10 00:00:00 INFO Master: Running Spark version 1.5.2
+15/10/10 00:00:00 INFO Utils: Successfully started service 'MasterUI' on port 8080.
+15/10/10 00:00:00 INFO MasterWebUI: Started MasterWebUI at http://192.168.179.3:8080
+15/10/10 00:00:00 INFO Utils: Successfully started service on port 6066.
+15/10/10 00:00:00 INFO StandaloneRestServer: Started REST server for submitting applications on port 6066
+15/10/10 00:00:00 INFO Master: I have been elected leader! New state: ALIVE
 ```
 * 起動時のログに Master のアドレスが出力される
 
@@ -1072,10 +1138,17 @@ https://spark.apache.org/docs/latest/spark-standalone.html#standby-masters-with-
 
 ---
 
+.todo[
+* Workerを起動
+]
+
 ## クラスタの起動 - Workers
 
 ```bash
-spark-class org.apache.spark.deploy.worker.Worker spark://192.168.179.3:7077
+spark-class org.apache.spark.deploy.worker.Worker spark://127.0.0.1:7077
+
+# ↓のログが出力されると起動完了
+15/10/10 00:00:00 INFO Worker: Successfully registered with master spark://127.0.0.1:7077
 ```
 
 * 引数にMasterのアドレスを指定する
@@ -1083,29 +1156,43 @@ spark-class org.apache.spark.deploy.worker.Worker spark://192.168.179.3:7077
 
 ---
 
+.todo[
+* JARをsubmit
+]
+
 ## クラスタへの submit
 
 ```bash
 # JAR があるディレクトリに移動
 cd spark-hands-on-development/modules/backend/target/scala-2.10/
 # Sparkのクラスタへ submit
-spark-submit --deploy-mode cluster --master spark://192.168.179.3:7077 twitter-hashtag-ranking-backend-assembly-1.0.0.jar
+spark-submit --deploy-mode cluster --master spark://127.0.0.1:7077 twitter-hashtag-ranking-backend-assembly-1.0.0.jar
+
+# *Master* のコンソールに下記のようなログが出力されると完了
+15/10/10 00:00:00 INFO Master: Registering app twitter-hashtag-ranking
+15/10/10 00:00:00 INFO Master: Registered app twitter-hashtag-ranking with ID app-2015101000000-0000
+15/10/10 00:00:00 INFO Master: Launching executor app-2015101000000-0000/0 on worker worker-2015101000000-192.168.179.3-55486
 ```
 
 ---
 
+.todo[
+* リアルタイムにランキングが更新されていることを確認
+]
+
 ## 画面を確認
 
-フロントエンドの起動
+フロントエンドの起動.small[(既に起動している場合は不要)]
 ~~~bash
-### Mac OS X ###
 cd spark-hands-on-development
 ./activator run
-~~~
-~~~bash
-### Windows ###
-cd spark-hands-on-development
-activator run
+
+# ↓のログが出力されると起動完了
+--- (Running the application, auto-reloading is enabled) ---
+
+[info] p.c.s.NettyServer - Listening for HTTP on /0:0:0:0:0:0:0:0:9000
+
+(Server started, use Ctrl+D to stop and go back to the console...)
 ~~~
 
 ▶ブラウザで http://localhost:9000/ を開く
@@ -1184,8 +1271,8 @@ class: middle, center
 
 .center[
 ### アンケートにご協力ください
-.qr-code.size-20[http://goo.gl/forms/wF3zZzRw6O]<br>
-[回答する](http://goo.gl/forms/wF3zZzRw6O)
+.qr-code.size-20[http://goo.gl/forms/bPIkjJqhfi]<br>
+[回答する](http://goo.gl/forms/bPIkjJqhfi)
 ]
 
 </textarea>
@@ -1225,12 +1312,12 @@ class: middle, center
         }
         var controlling = remote.control(passcode);
 
-        $(".todo").each(function() {
+        $(".todo").each(function(todo_index) {
           var $this = $(this);
           var category = $this.attr("class").replace(/\s/g, "_");
-          $this.find("li").each(function(index) {
+          $this.find("li").each(function(li_index) {
             var $li = $(this);
-            var id = category + "_" + index;
+            var id = category + "_" + todo_index + "_" + li_index;
             var label = $li.text();
             $li.text("");
             $li.attr("id", id);
@@ -1285,12 +1372,12 @@ class: middle, center
           return $("input#" + category).prop("checked").toString();
         };
 
-        $(".todo").each(function() {
+        $(".todo").each(function(todo_index) {
           var $this = $(this);
           var category = $this.attr("class").replace(/\s/g, "_");
-          $this.find("li").each(function(index) {
+          $this.find("li").each(function(li_index) {
             var $li = $(this);
-            var id = category + "_" + index;
+            var id = category + "_" + todo_index + "_" + li_index;
             var $input = $("<input type='checkbox' id='" + id + "' />");
             var label = $li.text();
             $li.text("");
