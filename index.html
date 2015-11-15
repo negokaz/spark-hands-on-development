@@ -90,8 +90,9 @@
     git checkout step1
     ~~~
 * 質問や気になることなどはチャットへ投稿してください
-    * http://chat.tech-circle-10.mydns.jp/
-    * ID: guest / PW: guest でログインしてください
+    * http://chat.tech-circle-10.mydns.jp/ - ID: guest / PW: guest でログインしてください
+* ハンズオンで使う開発環境.small[(IntelliJ IDEA 以外でも可)]を起動しておいてください
+* Scalaを予習する時間が無くて`filter`, `map`, `flatMap`が何をするものかわかりません！ という方は[ここ](https://github.com/negokaz/spark-hands-on-development/blob/master/doc/functions.md)から予習しておいてください
 ]
 
 ???
@@ -1168,7 +1169,10 @@ cd spark-hands-on-development/modules/backend/target/scala-2.10/
 # Sparkのクラスタへ submit
 spark-submit --deploy-mode cluster --master spark://127.0.0.1:7077 twitter-hashtag-ranking-backend-assembly-1.0.0.jar
 
-# *Master* のコンソールに下記のようなログが出力されると完了
+# spark-submit が終了すると完了
+```
+```
+# Masterには下記のようなログが出力される
 15/10/10 00:00:00 INFO Master: Registering app twitter-hashtag-ranking
 15/10/10 00:00:00 INFO Master: Registered app twitter-hashtag-ranking with ID app-2015101000000-0000
 15/10/10 00:00:00 INFO Master: Launching executor app-2015101000000-0000/0 on worker worker-2015101000000-192.168.179.3-55486
@@ -1196,6 +1200,8 @@ cd spark-hands-on-development
 ~~~
 
 ▶ブラウザで http://localhost:9000/ を開く
+
+.small[※ ランキングが表示されるまで少し時間がかかります]
 
 ---
 
