@@ -15,7 +15,10 @@
    version="1.1"
    inkscape:version="0.91 r13725"
    viewBox="0 0 936.00177 627.03504"
-   sodipodi:docname="function_flatMap.svg">
+   sodipodi:docname="function_flatMap.svg"
+   inkscape:export-filename="/Users/kazuki/workspace/spark-hands-on-development/doc/function_flatMap.png"
+   inkscape:export-xdpi="67.5"
+   inkscape:export-ydpi="67.5">
   <defs
      id="defs5816">
     <marker
@@ -147,15 +150,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="319.70883"
+     inkscape:cx="157.20883"
      inkscape:cy="318.7401"
      inkscape:current-layer="g4228"
      inkscape:document-units="px"
      showgrid="true"
      inkscape:window-width="1436"
      inkscape:window-height="855"
-     inkscape:window-x="298"
-     inkscape:window-y="9"
+     inkscape:window-x="-19"
+     inkscape:window-y="13"
      inkscape:window-maximized="0"
      inkscape:snap-bbox="true"
      inkscape:bbox-nodes="true"
@@ -358,28 +361,27 @@
    id="tspan13857">flatMap</tspan>(sprit)</tspan></text>
         <path
            style="display:inline;fill:#00cc00;fill-rule:evenodd;stroke:#00cc00;stroke-width:3.4000001;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
-           d="M 233.51126,298.2975 438,299.72146"
+           d="M 233.51126,297.77822 430,298.00002"
            id="path4945"
            inkscape:connector-type="polyline"
            inkscape:connector-curvature="0"
            inkscape:connection-start="#g4699"
-           inkscape:connection-end="#g4699-5" />
+           inkscape:export-xdpi="67.5"
+           inkscape:export-ydpi="67.5" />
         <path
            style="display:inline;fill:#00cc00;fill-rule:evenodd;stroke:#00cc00;stroke-width:3.4000001;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Mend-1)"
-           d="m 233.51126,354.20768 202.48784,14.8566"
+           d="M 233.51126,354.01312 430,368.00002"
            id="path4945-0"
            inkscape:connector-type="polyline"
            inkscape:connector-curvature="0"
-           inkscape:connection-start="#g4699-0"
-           inkscape:connection-end="#g4699-0-2" />
+           inkscape:connection-start="#g4699-0" />
         <path
            style="display:inline;fill:#00cc00;fill-rule:evenodd;stroke:#00cc00;stroke-width:3.4000001;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Mend-1-6)"
-           d="m 233.51126,409.55381 202.48785,27.01988"
+           d="M 233.51126,410.24802 430,438.00002"
            id="path4945-0-5"
            inkscape:connector-type="polyline"
            inkscape:connector-curvature="0"
-           inkscape:connection-start="#g4699-1"
-           inkscape:connection-end="#g4699-1-49" />
+           inkscape:connection-start="#g4699-1" />
         <text
            xml:space="preserve"
            style="font-style:normal;font-weight:normal;font-size:30px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#404040;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
