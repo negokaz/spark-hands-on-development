@@ -1,22 +1,23 @@
 /*
  * Tech-Circle用のスタイル
  */
-@import url(https://fonts.googleapis.com/css?family=Viga);
-.tc-title h1,
-.tc-title h2,
-.tc-title h3 {
-  font-family: "Viga";
+@import url(https://fonts.googleapis.com/css?family=Exo+2:800);
+.tc-title-app h1,
+.tc-title-app h2,
+.tc-title-app h3 {
+  color: #000000;
+  font-family: "Exo 2";
   margin: 0;
 }
-.tc-title h1 {
+.tc-title-app h1 {
   font-size: 100px;
 }
-.tc-title h2 {
-  font-size: 75px;
+.tc-title-app h2 {
+  font-size: 65px;
 }
-.tc-title h3 {
+.tc-title-app h3 {
   font-size: 50px;
 }
-.tc-title h1::first-letter {
-  color: #4a86e8;
+.tc-title-app h1::first-letter {
+  color: #00C853;
 }
