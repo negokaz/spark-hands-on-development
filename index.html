@@ -53,6 +53,10 @@
     margin: 0 0.5em;
   }
 
+  .todo .count, .todo .population {
+      font-size: 2em;
+  }
+
   @media print {
     .remote-controller {
       visibility: hidden;
@@ -1349,7 +1353,7 @@ class: middle, center
             var $start = $("<input type='button' value='?' />")
             $li.append($start);
             $li.append($count);
-            $li.append("<span>/</span>");
+            $li.append("<span style='font-size: 2em'>/</span>");
             $li.append($population);
             $li.append("<span>: " + label + "</span>");
             $start.on("click", function() {
